@@ -310,7 +310,28 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                 fontFamily: '"Times New Roman", serif',
                 fontSize: '0.9rem',
                 lineHeight: '1.4',
+                position: 'relative',
+                overflow: 'hidden',
             }}>
+
+                {/* ═══ Unofficial Watermark ═══ */}
+                <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%) rotate(-35deg)',
+                    fontSize: '80px',
+                    fontWeight: 'bold',
+                    fontStyle: 'italic',
+                    color: 'rgba(0, 0, 0, 0.08)',
+                    whiteSpace: 'nowrap',
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                    letterSpacing: '10px',
+                    fontFamily: '"Times New Roman", serif',
+                }}>
+                    Unofficial Transcript
+                </div>
 
                 {/* School Header */}
                 <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
