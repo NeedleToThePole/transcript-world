@@ -1,0 +1,205 @@
+@media print {
+
+    /* Hide UI elements */
+    .app-sidebar,
+    .app-header,
+    .btn-print-hide,
+    .no-print {
+        display: none !important;
+    }
+
+    /* Reset layout for print */
+    .app-container {
+        display: block;
+        min-height: auto;
+    }
+
+    .app-main {
+        padding: 0;
+        overflow: visible;
+        background-color: white;
+    }
+
+    /* Transcript Container */
+    .transcript-container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+    }
+
+    /* Ensure background colors print */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Page breaks */
+    .page-break {
+        page-break-before: always;
+    }
+
+    /* ══ Official Transcript — fit on ONE page ══ */
+    @page {
+        size: letter portrait;
+        margin: 0.25in;
+    }
+
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .official-transcript-paper {
+        max-width: none !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 8.5px !important;
+        line-height: 1.1 !important;
+        page-break-inside: avoid;
+    }
+
+    .official-transcript-paper h1 {
+        font-size: 16px !important;
+        margin: 0 0 2px !important;
+    }
+
+    .official-transcript-paper table {
+        font-size: 8px !important;
+    }
+
+    .official-transcript-paper td,
+    .official-transcript-paper th {
+        padding: 1px 3px !important;
+    }
+
+    .official-transcript-paper input {
+        display: none !important;
+    }
+}
+
+/* Screen styles for transcript preview that mimic print */
+.transcript-preview {
+    background-color: white;
+    padding: 40px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    /* Adjust based on landscape/portrait */
+}
+
+.transcript-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #000;
+    padding-bottom: 20px;
+}
+
+.school-name {
+    font-family: serif;
+    /* Match the formal look */
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.school-subname {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.student-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 40px;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.info-row {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 2px;
+}
+
+.info-label {
+    font-weight: bold;
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.info-value {
+    flex: 1;
+}
+
+/* Topic Table */
+.topics-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    font-size: 12px;
+}
+
+.topics-table th,
+.topics-table td {
+    border: 1px solid #000;
+    padding: 4px 8px;
+    text-align: left;
+}
+
+.topics-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    text-align: center;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+/* Footer */
+.transcript-footer {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.signature-line {
+    border-top: 1px solid #000;
+    padding-top: 5px;
+    margin-top: 40px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.seal-placeholder {
+    width: 150px;
+    height: 150px;
+    border: 2px dashed #ccc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: #ccc;
+    font-weight: bold;
+    /* Hidden per user request, but keeping class for layout structure if needed later */
+    display: none;
+}
+
+.disclaimer {
+    font-size: 10px;
+    font-style: italic;
+    text-align: center;
+    margin-top: 20px;
+}

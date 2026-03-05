@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.log
+
+# Reference docs and images (not needed for deployment)
+*.docx
+*.xlsx
+*.jpg
+!public/**
+db.json
+students_import.json
