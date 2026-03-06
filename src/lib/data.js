@@ -47,7 +47,8 @@ export async function updateRequestStatus(id, status) {
 
 export async function getTeacherCodes() {
     const res = await fetch(`${API_URL}/teacherCodes`);
-    return res.json();
+    const data = await res.json();
+    return data.sort((a, b) => a.program.localeCompare(b.program));
 }
 
 export async function getStudentsByProgram(program) {
