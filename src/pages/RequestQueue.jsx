@@ -51,6 +51,15 @@ export default function RequestQueue() {
         );
     };
 
+    const [expandedIds, setExpandedIds] = useState(new Set());
+
+    const toggleExpand = (id) => {
+        const newExpanded = new Set(expandedIds);
+        if (newExpanded.has(id)) newExpanded.delete(id);
+        else newExpanded.add(id);
+        setExpandedIds(newExpanded);
+    };
+
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -85,31 +94,65 @@ export default function RequestQueue() {
                             </tr>
                         )}
                         {filteredRequests.map(req => (
-                            <tr key={req.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                <td style={{ padding: '1rem' }}>
-                                    <div style={{ fontWeight: '600' }}>{req.firstName} {req.lastName}</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>ID: {req.studentId}</div>
-                                </td>
-                                <td style={{ padding: '1rem', fontSize: '0.9rem' }}>{req.program}</td>
-                                <td style={{ padding: '1rem' }}>{req.type}</td>
-                                <td style={{ padding: '1rem' }}>{req.requestDate}</td>
-                                <td style={{ padding: '1rem' }}>{statusBadge(req.status)}</td>
-                                <td style={{ padding: '1rem' }}>
-                                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                                        <Link to={`/admin/transcript/${req.id}`} className="btn btn-primary" style={{ padding: '0.4rem' }} title="View Transcript">
-                                            <Eye size={16} />
-                                        </Link>
+                            <React.Fragment key={req.id}>
+                                <tr style={{ borderBottom: expandedIds.has(req.id) ? 'none' : '1px solid #f1f5f9', cursor: 'pointer', transition: 'background 0.2s' }} onClick={() => toggleExpand(req.id)} className="hover-row">
+                                    <td style={{ padding: '1rem' }}>
+                                        <div style={{ fontWeight: '600' }}>{req.firstName} {req.lastName}</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>ID: {req.studentId}</div>
+                                    </td>
+                                    <td style={{ padding: '1rem', fontSize: '0.9rem' }}>{req.program}</td>
+                                    <td style={{ padding: '1rem' }}>{req.type}</td>
+                                    <td style={{ padding: '1rem' }}>{req.requestDate}</td>
+                                    <td style={{ padding: '1rem' }}>{statusBadge(req.status)}</td>
+                                    <td style={{ padding: '1rem' }} onClick={(e) => e.stopPropagation()}>
+                                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                                            <Link to={`/admin/transcript/${req.id}`} className="btn btn-primary" style={{ padding: '0.4rem' }} title="View Transcript">
+                                                <Eye size={16} />
+                                            </Link>
 
-                                        {req.status === 'Ready for Review' && (
-                                            <>
-                                                <Link
-                                                    to={`/admin/official/${req.id}`}
-                                                    className="btn btn-outline"
-                                                    style={{ padding: '0.4rem', color: '#0d9488', borderColor: '#0d9488' }}
-                                                    title="View Official Transcript"
-                                                >
-                                                    <FileText size={16} />
-                                                </Link>
+                                            {req.status === 'Ready for Review' && (
+                                                <>
+                                                    <Link
+                                                        to={`/admin/official/${req.id}`}
+                                                        className="btn btn-outline"
+                                                        style={{ padding: '0.4rem', color: '#0d9488', borderColor: '#0d9488' }}
+                                                        title="View Official Transcript"
+                                                    >
+                                                        <FileText size={16} />
+                                                    </Link>
+                                                    <button
+                                                        className="btn btn-outline"
+                                                        style={{ padding: '0.4rem', color: 'var(--success-color)', borderColor: 'var(--success-color)' }}
+                                                        onClick={() => handleStatusUpdate(req.id, 'Completed')}
+                                                        title="Mark Complete"
+                                                    >
+                                                        <Check size={16} />
+                                                    </button>
+                                                </>
+                                            )}
+
+                                            {(req.status === 'Pending' || req.status?.startsWith('Pending')) && (
+                                                <>
+                                                    <button
+                                                        className="btn btn-outline"
+                                                        style={{ padding: '0.4rem', color: 'var(--success-color)', borderColor: 'var(--success-color)' }}
+                                                        onClick={() => handleStatusUpdate(req.id, 'Processing')}
+                                                        title="Approve / Start"
+                                                    >
+                                                        <Check size={16} />
+                                                    </button>
+                                                    <button
+                                                        className="btn btn-outline"
+                                                        style={{ padding: '0.4rem', color: 'var(--danger-color)', borderColor: 'var(--danger-color)' }}
+                                                        onClick={() => handleStatusUpdate(req.id, 'Denied')}
+                                                        title="Deny"
+                                                    >
+                                                        <X size={16} />
+                                                    </button>
+                                                </>
+                                            )}
+
+                                            {req.status === 'Processing' && (
                                                 <button
                                                     className="btn btn-outline"
                                                     style={{ padding: '0.4rem', color: 'var(--success-color)', borderColor: 'var(--success-color)' }}
@@ -118,54 +161,74 @@ export default function RequestQueue() {
                                                 >
                                                     <Check size={16} />
                                                 </button>
-                                            </>
-                                        )}
+                                            )}
 
-                                        {(req.status === 'Pending' || req.status?.startsWith('Pending')) && (
-                                            <>
-                                                <button
+                                            {req.status === 'Completed' && (
+                                                <Link
+                                                    to={`/admin/official/${req.id}`}
                                                     className="btn btn-outline"
-                                                    style={{ padding: '0.4rem', color: 'var(--success-color)', borderColor: 'var(--success-color)' }}
-                                                    onClick={() => handleStatusUpdate(req.id, 'Processing')}
-                                                    title="Approve / Start"
+                                                    style={{ padding: '0.4rem', color: '#0d9488', borderColor: '#0d9488' }}
+                                                    title="View Official / Print"
                                                 >
-                                                    <Check size={16} />
-                                                </button>
-                                                <button
-                                                    className="btn btn-outline"
-                                                    style={{ padding: '0.4rem', color: 'var(--danger-color)', borderColor: 'var(--danger-color)' }}
-                                                    onClick={() => handleStatusUpdate(req.id, 'Denied')}
-                                                    title="Deny"
-                                                >
-                                                    <X size={16} />
-                                                </button>
-                                            </>
-                                        )}
-
-                                        {req.status === 'Processing' && (
-                                            <button
-                                                className="btn btn-outline"
-                                                style={{ padding: '0.4rem', color: 'var(--success-color)', borderColor: 'var(--success-color)' }}
-                                                onClick={() => handleStatusUpdate(req.id, 'Completed')}
-                                                title="Mark Complete"
-                                            >
-                                                <Check size={16} />
-                                            </button>
-                                        )}
-
-                                        {req.status === 'Completed' && (
-                                            <Link
-                                                to={`/admin/official/${req.id}`}
-                                                className="btn btn-outline"
-                                                style={{ padding: '0.4rem', color: '#0d9488', borderColor: '#0d9488' }}
-                                                title="View Official / Print"
-                                            >
-                                                <Printer size={16} />
-                                            </Link>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
+                                                    <Printer size={16} />
+                                                </Link>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {expandedIds.has(req.id) && (
+                                    <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #f1f5f9' }}>
+                                        <td colSpan="6" style={{ padding: '1rem 1.5rem' }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '2rem' }}>
+                                                {/* Left: Personal & Mailing */}
+                                                <div>
+                                                    <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#64748b', marginBottom: '0.5rem' }}>Personal & Contact</h4>
+                                                    <div style={{ fontSize: '0.85rem', lineHeight: '1.6' }}>
+                                                        <div><strong>DOB:</strong> {req.dob || 'N/A'}</div>
+                                                        <div><strong>SSN:</strong> {req.ssn || 'N/A'}</div>
+                                                        <div><strong>Phone:</strong> {req.phone || 'N/A'}</div>
+                                                        <div><strong>Email:</strong> {req.email || 'N/A'}</div>
+                                                        <div style={{ marginTop: '0.5rem' }}><strong>Mailing Address:</strong><br />
+                                                            {req.addressStreet}<br />
+                                                            {req.addressCity}, {req.addressState} {req.addressZip}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {/* Middle: Enrollment & Options */}
+                                                <div>
+                                                    <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#64748b', marginBottom: '0.5rem' }}>Enrollment & Request</h4>
+                                                    <div style={{ fontSize: '0.85rem', lineHeight: '1.6' }}>
+                                                        <div><strong>Enrolled:</strong> {req.yearEnrolled || 'N/A'}</div>
+                                                        <div><strong>Last Attended:</strong> {req.yearLastAttended || 'N/A'}</div>
+                                                        <div><strong>Semester:</strong> {req.semester || 'N/A'}</div>
+                                                        <div style={{ marginTop: '0.5rem' }}><strong>Processing:</strong> {req.processingOption}</div>
+                                                        <div><strong>Copies:</strong> {req.copies}</div>
+                                                        <div><strong>Delivery:</strong> {req.deliveryMethod}</div>
+                                                    </div>
+                                                </div>
+                                                {/* Right: Forwarding */}
+                                                <div>
+                                                    <h4 style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#64748b', marginBottom: '0.5rem' }}>Forward To</h4>
+                                                    <div style={{ fontSize: '0.85rem', lineHeight: '1.6' }}>
+                                                        {req.forwardName ? (
+                                                            <>
+                                                                <div><strong>Name:</strong> {req.forwardName}</div>
+                                                                <div><strong>Phone:</strong> {req.forwardPhone || 'N/A'}</div>
+                                                                <div><strong>Address:</strong><br />
+                                                                    {req.forwardStreet}<br />
+                                                                    {req.forwardCity}, {req.forwardState} {req.forwardZip}
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <div style={{ color: '#94a3b8', fontStyle: 'italic' }}>No forwarding info provided</div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                            </React.Fragment>
                         ))}
                     </tbody>
                 </table>
