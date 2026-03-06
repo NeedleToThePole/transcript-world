@@ -215,6 +215,42 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
         });
     };
 
+    // Auto-calculate totals for specific programs (Barbering)
+    useEffect(() => {
+        if (!header.program || !colHours || colHours.length === 0) return;
+
+        // Opt-in list of programs for auto-calculation
+        const autoCalcPrograms = ['Barbering'];
+
+        if (autoCalcPrograms.includes(header.program)) {
+            // Calculate total accumulated hours
+            let total = 0;
+            for (const col of colHours) {
+                for (const hrs of col) {
+                    const parsed = parseFloat(hrs);
+                    if (!isNaN(parsed)) {
+                        total += parsed;
+                    }
+                }
+            }
+
+            // Calculate CEUs (10 hours = 1 CEU)
+            const ceus = (total / 10).toFixed(1);
+
+            // Update header state if values have changed to prevent infinite loops
+            setHeader(prev => {
+                if (prev.totalAccumulated === String(total) && prev.ceus === String(ceus)) {
+                    return prev;
+                }
+                return {
+                    ...prev,
+                    totalAccumulated: String(total),
+                    ceus: String(ceus)
+                };
+            });
+        }
+    }, [colHours, header.program]); // Depend on colHours changing
+
     const handlePrint = () => window.print();
 
     const handleSave = async (forceComplete = false) => {
