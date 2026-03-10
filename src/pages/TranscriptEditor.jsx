@@ -374,6 +374,9 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                 padding: '1.5rem 2rem',
                 margin: '0 auto',
                 maxWidth: '1100px',
+                minHeight: template.layout === 'stacked' ? '10.5in' : 'auto',
+                display: 'flex',
+                flexDirection: 'column',
                 boxShadow: 'var(--shadow-lg)',
                 fontFamily: '"Times New Roman", serif',
                 fontSize: '0.9rem',
@@ -520,7 +523,7 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                 )}
 
                 {/* Footer */}
-                <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                <div style={{ marginTop: 'auto', paddingTop: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                     <div style={{ width: '45%' }}>
                         {(!is2Col || template.layout === 'stacked') && (
                             <p style={{ fontSize: '0.75rem', lineHeight: '1.3', marginBottom: '1rem', fontStyle: 'italic' }}>
