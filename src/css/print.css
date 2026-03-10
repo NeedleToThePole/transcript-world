@@ -58,23 +58,11 @@
         box-shadow: none !important;
         margin: 0 !important;
         padding: 0 !important;
-        font-size: 8.5px !important;
-        line-height: 1.1 !important;
         page-break-inside: avoid;
     }
 
     .official-transcript-paper h1 {
-        font-size: 16px !important;
         margin: 0 0 2px !important;
-    }
-
-    .official-transcript-paper table {
-        font-size: 8px !important;
-    }
-
-    .official-transcript-paper td,
-    .official-transcript-paper th {
-        padding: 1px 3px !important;
     }
 
     .official-transcript-paper input {

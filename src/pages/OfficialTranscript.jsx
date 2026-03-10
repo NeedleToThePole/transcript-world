@@ -108,12 +108,12 @@ export default function OfficialTranscript({
                 Official Transcript
             </div>
 
-            {/* ═══ DOE Header (Letterhead Image) ═══ */}
-            <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+            {/* ═══ DOE Header (Letterhead Image Cropped) ═══ */}
+            <div style={{ position: 'relative', width: '100%', paddingTop: '25%', overflow: 'hidden', marginBottom: '8px' }}>
                 <img
                     src="/letterhead.jpg"
                     alt="Raphael O. Wheatley Skill Center Letterhead"
-                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                    style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: 'auto', display: 'block' }}
                 />
             </div>
 
