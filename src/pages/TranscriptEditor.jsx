@@ -42,7 +42,7 @@ function Field({ value, onChange, style = {}, align, editMode }) {
     return <span style={{ textDecoration: 'underline', ...style }}>{value || '________'}</span>;
 }
 
-function TopicColumn({ topics, hours, onUpdate, editMode, showChNum, chOffset, layout }) {
+function TopicColumn({ topics, hours, dates, onUpdate, onUpdateDate, editMode, showChNum, chOffset, layout }) {
     return (
         <table style={{ borderCollapse: 'collapse', border: '1px solid black', fontSize: '0.8rem', width: '100%' }}>
             <thead>
@@ -90,7 +90,18 @@ function TopicColumn({ topics, hours, onUpdate, editMode, showChNum, chOffset, l
                                 <span style={{ display: 'block', textAlign: 'center' }}>{hours[i] || ''}</span>
                             )}
                         </td>
-                        {showChNum && <td style={cellStyle}></td>}
+                        {showChNum && <td style={cellStyle}>
+                            {editMode ? (
+                                <input
+                                    style={{ ...inputStyle, width: '50px', textAlign: 'center' }}
+                                    value={dates?.[i] || ''}
+                                    onChange={e => onUpdateDate?.(i, e.target.value)}
+                                    placeholder="MM/DD"
+                                />
+                            ) : (
+                                <span style={{ display: 'block', textAlign: 'center' }}>{dates?.[i] || ''}</span>
+                            )}
+                        </td>}
                     </tr>
                 ))}
             </tbody>
@@ -131,6 +142,9 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
     // Editable "hours completed" per column (up to 3 columns)
     const [colHours, setColHours] = useState([]);
 
+    // Editable "date" per column
+    const [colDates, setColDates] = useState([]);
+
     useEffect(() => {
         if (mode === 'student') {
             // Load by student ID (teacher roster flow)
@@ -161,6 +175,11 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                         setColHours(existing.colHours);
                     } else {
                         setColHours(tmpl.columns.map(col => col.topics.map(() => '')));
+                    }
+                    if (existing?.colDates) {
+                        setColDates(existing.colDates);
+                    } else {
+                        setColDates(tmpl.columns.map(col => col.topics.map(() => '')));
                     }
                 }
                 setLoading(false);
@@ -196,6 +215,11 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                     } else {
                         setColHours(tmpl.columns.map(col => col.topics.map(() => '')));
                     }
+                    if (existing?.colDates) {
+                        setColDates(existing.colDates);
+                    } else {
+                        setColDates(tmpl.columns.map(col => col.topics.map(() => '')));
+                    }
                 }
                 setLoading(false);
             });
@@ -208,6 +232,14 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
 
     const updateColHourAt = (colIdx, rowIdx, value) => {
         setColHours(prev => {
+            const copy = prev.map(arr => [...arr]);
+            copy[colIdx][rowIdx] = value;
+            return copy;
+        });
+    };
+
+    const updateColDateAt = (colIdx, rowIdx, value) => {
+        setColDates(prev => {
             const copy = prev.map(arr => [...arr]);
             copy[colIdx][rowIdx] = value;
             return copy;
@@ -266,6 +298,7 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
             program,
             header,
             colHours,
+            colDates,
             status,
             lastModified: new Date().toISOString(),
         });
@@ -466,7 +499,9 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                                 <TopicColumn
                                     topics={col.topics}
                                     hours={colHours[ci] || []}
+                                    dates={colDates[ci] || []}
                                     onUpdate={(rowIdx, v) => updateColHourAt(ci, rowIdx, v)}
+                                    onUpdateDate={(rowIdx, v) => updateColDateAt(ci, rowIdx, v)}
                                     editMode={editMode}
                                     showChNum={is2Col || template.layout === 'stacked'}
                                     chOffset={template.layout === 'stacked' ? 0 : chOffset}
