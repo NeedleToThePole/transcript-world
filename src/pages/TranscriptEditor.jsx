@@ -42,12 +42,12 @@ function Field({ value, onChange, style = {}, align, editMode }) {
     return <span style={{ textDecoration: 'underline', ...style }}>{value || '________'}</span>;
 }
 
-function TopicColumn({ topics, hours, onUpdate, editMode, showChNum, chOffset }) {
+function TopicColumn({ topics, hours, onUpdate, editMode, showChNum, chOffset, layout }) {
     return (
         <table style={{ borderCollapse: 'collapse', border: '1px solid black', fontSize: '0.8rem', width: '100%' }}>
             <thead>
                 <tr>
-                    {showChNum && <th style={{ ...cellStyle, width: '35px', fontWeight: 'bold' }}>CH #</th>}
+                    {showChNum && <th style={{ ...cellStyle, width: '45px', fontWeight: 'bold' }}>{layout === 'stacked' ? 'Theory' : 'CH #'}</th>}
                     <th style={{ ...cellStyle, textAlign: 'left', fontWeight: 'bold' }}>
                         {showChNum ? 'Theory Subject' : 'Topics'}
                     </th>
@@ -373,86 +373,112 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                     <h1 style={{ fontSize: '1.4rem', fontWeight: 'bold', textTransform: 'uppercase', margin: '0 0 0.25rem' }}>
                         Raphael O. Wheatley Skill Center
                     </h1>
-                    <p style={{ fontSize: '1rem', fontStyle: 'italic', margin: '0 0 0.75rem', color: is2Col ? '#c00' : 'inherit' }}>
+                    <p style={{ fontSize: '1rem', fontStyle: template.layout === 'stacked' ? 'normal' : 'italic', margin: '0 0 0.75rem', color: (is2Col && template.layout !== 'stacked') ? '#c00' : 'inherit' }}>
                         A Post-Secondary Technical and Career Education Institute
                     </p>
-                    <h2 style={{ fontSize: '1.15rem', fontWeight: 'bold', textDecoration: 'underline', margin: 0, color: is2Col ? '#c00' : 'inherit' }}>
+                    <h2 style={{ fontSize: '1.15rem', fontWeight: 'bold', textDecoration: 'underline', fontStyle: template.layout === 'stacked' ? 'italic' : 'normal', margin: 0, color: (is2Col || template.layout === 'stacked') ? '#c00' : 'inherit' }}>
                         {template.title}
                     </h2>
                 </div>
 
-                {/* Student Info Row */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div>Student: <Field editMode={editMode} value={header.studentName} onChange={v => updateHeader('studentName', v)} style={{ minWidth: '200px' }} /></div>
-                    <div>Program: <Field editMode={editMode} value={header.program} onChange={v => updateHeader('program', v)} style={{ minWidth: '180px' }} /></div>
-                    {!is2Col && (
-                        <div>Instructor: <Field editMode={editMode} value={header.instructor} onChange={v => updateHeader('instructor', v)} style={{ minWidth: '150px' }} /></div>
-                    )}
-                </div>
-
-                {/* Stats Row 1 */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    {!is2Col && (
-                        <>
-                            <div>Total Classroom Hours: <Field editMode={editMode} value={header.totalClassHours} onChange={v => updateHeader('totalClassHours', v)} style={{ width: '50px' }} align="center" /></div>
-                            <div>Total Externship Hours: <Field editMode={editMode} value={header.totalExternshipHours} onChange={v => updateHeader('totalExternshipHours', v)} style={{ width: '50px' }} align="center" /></div>
-                        </>
-                    )}
-                    <div>Total Program Hours: <Field editMode={editMode} value={header.totalProgramHours} onChange={v => updateHeader('totalProgramHours', v)} style={{ width: '50px' }} align="center" /></div>
-                    <div>Total Hours Accumulated: <Field editMode={editMode} value={header.totalAccumulated} onChange={v => updateHeader('totalAccumulated', v)} style={{ width: '60px' }} align="center" /></div>
-                    {is2Col && (
-                        <div>CUE: <Field editMode={editMode} value={header.ceus} onChange={v => updateHeader('ceus', v)} style={{ width: '50px' }} align="center" /></div>
-                    )}
-                </div>
-
-                {/* Stats Row 2 */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    {!is2Col && (
-                        <div>School Year: <Field editMode={editMode} value={header.schoolYear} onChange={v => updateHeader('schoolYear', v)} style={{ width: '90px' }} /></div>
-                    )}
-                    <div>Start Date: <Field editMode={editMode} value={header.startDate} onChange={v => updateHeader('startDate', v)} style={{ width: '90px' }} /></div>
-                    <div>End Date: <Field editMode={editMode} value={header.endDate} onChange={v => updateHeader('endDate', v)} style={{ width: '90px' }} /></div>
-                    {is2Col && (
-                        <div>Graduation Date: <Field editMode={editMode} value={header.graduationDate} onChange={v => updateHeader('graduationDate', v)} style={{ width: '90px' }} /></div>
-                    )}
-                    {!is2Col && (
-                        <>
-                            <div>GPA: <Field editMode={editMode} value={header.gpa} onChange={v => updateHeader('gpa', v)} style={{ width: '40px' }} align="center" /> %</div>
-                            <div>CEUs: <Field editMode={editMode} value={header.ceus} onChange={v => updateHeader('ceus', v)} style={{ width: '40px' }} align="center" /></div>
-                        </>
-                    )}
-                </div>
-
-                {/* Instructor row for Barbering (2 instructors) */}
-                {is2Col && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        <div>Instructor: <Field editMode={editMode} value={header.instructor} onChange={v => updateHeader('instructor', v)} style={{ minWidth: '200px' }} /></div>
-                        <div>Instructor: <Field editMode={editMode} value={header.instructor2} onChange={v => updateHeader('instructor2', v)} style={{ minWidth: '200px' }} /></div>
+                {/* Header Information rows based on layout  */}
+                {template.layout === 'stacked' ? (
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                            <div>Students' Name: <Field editMode={editMode} value={header.studentName} onChange={v => updateHeader('studentName', v)} style={{ minWidth: '200px' }} /></div>
+                            <div style={{ width: '250px' }}>Student's ID: <Field editMode={editMode} value={header.studentId || ''} onChange={v => updateHeader('studentId', v)} style={{ minWidth: '150px' }} /></div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                            <div>Start Date: <Field editMode={editMode} value={header.startDate} onChange={v => updateHeader('startDate', v)} style={{ width: '120px' }} /></div>
+                            <div style={{ width: '250px' }}>Graduation Date: <Field editMode={editMode} value={header.graduationDate} onChange={v => updateHeader('graduationDate', v)} style={{ width: '120px' }} /></div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <div style={{ flex: 1 }}>Total Program Hours: {header.totalProgramHours}</div>
+                            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between' }}>
+                                <div>Total Hours Accumulated: <Field editMode={editMode} value={header.totalAccumulated} onChange={v => updateHeader('totalAccumulated', v)} style={{ width: '60px' }} align="center" /></div>
+                                <div>CUE: <Field editMode={editMode} value={header.ceus} onChange={v => updateHeader('ceus', v)} style={{ width: '40px' }} align="center" /></div>
+                            </div>
+                        </div>
                     </div>
+                ) : (
+                    <>
+                        {/* Student Info Row */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            <div>Student: <Field editMode={editMode} value={header.studentName} onChange={v => updateHeader('studentName', v)} style={{ minWidth: '200px' }} /></div>
+                            <div>Program: <Field editMode={editMode} value={header.program} onChange={v => updateHeader('program', v)} style={{ minWidth: '180px' }} /></div>
+                            {!is2Col && (
+                                <div>Instructor: <Field editMode={editMode} value={header.instructor} onChange={v => updateHeader('instructor', v)} style={{ minWidth: '150px' }} /></div>
+                            )}
+                        </div>
+
+                        {/* Stats Row 1 */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {!is2Col && (
+                                <>
+                                    <div>Total Classroom Hours: <Field editMode={editMode} value={header.totalClassHours} onChange={v => updateHeader('totalClassHours', v)} style={{ width: '50px' }} align="center" /></div>
+                                    <div>Total Externship Hours: <Field editMode={editMode} value={header.totalExternshipHours} onChange={v => updateHeader('totalExternshipHours', v)} style={{ width: '50px' }} align="center" /></div>
+                                </>
+                            )}
+                            <div>Total Program Hours: <Field editMode={editMode} value={header.totalProgramHours} onChange={v => updateHeader('totalProgramHours', v)} style={{ width: '50px' }} align="center" /></div>
+                            <div>Total Hours Accumulated: <Field editMode={editMode} value={header.totalAccumulated} onChange={v => updateHeader('totalAccumulated', v)} style={{ width: '60px' }} align="center" /></div>
+                            {is2Col && (
+                                <div>CUE: <Field editMode={editMode} value={header.ceus} onChange={v => updateHeader('ceus', v)} style={{ width: '50px' }} align="center" /></div>
+                            )}
+                        </div>
+
+                        {/* Stats Row 2 */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {!is2Col && (
+                                <div>School Year: <Field editMode={editMode} value={header.schoolYear} onChange={v => updateHeader('schoolYear', v)} style={{ width: '90px' }} /></div>
+                            )}
+                            <div>Start Date: <Field editMode={editMode} value={header.startDate} onChange={v => updateHeader('startDate', v)} style={{ width: '90px' }} /></div>
+                            <div>End Date: <Field editMode={editMode} value={header.endDate} onChange={v => updateHeader('endDate', v)} style={{ width: '90px' }} /></div>
+                            {is2Col && (
+                                <div>Graduation Date: <Field editMode={editMode} value={header.graduationDate} onChange={v => updateHeader('graduationDate', v)} style={{ width: '90px' }} /></div>
+                            )}
+                            {!is2Col && (
+                                <>
+                                    <div>GPA: <Field editMode={editMode} value={header.gpa} onChange={v => updateHeader('gpa', v)} style={{ width: '40px' }} align="center" /> %</div>
+                                    <div>CEUs: <Field editMode={editMode} value={header.ceus} onChange={v => updateHeader('ceus', v)} style={{ width: '40px' }} align="center" /></div>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Instructor row for Barbering (2 instructors) */}
+                        {is2Col && (
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                <div>Instructor: <Field editMode={editMode} value={header.instructor} onChange={v => updateHeader('instructor', v)} style={{ minWidth: '200px' }} /></div>
+                                <div>Instructor: <Field editMode={editMode} value={header.instructor2} onChange={v => updateHeader('instructor2', v)} style={{ minWidth: '200px' }} /></div>
+                            </div>
+                        )}
+                    </>
                 )}
 
-                {/* Topics Table — adapts to 2col or 3col layout */}
-                <div style={{ display: 'grid', gridTemplateColumns: `repeat(${numCols}, 1fr)`, gap: '0px' }}>
+                {/* Topics Table — adapts to 2col, 3col, or stacked layout */}
+                <div style={{ display: 'grid', gridTemplateColumns: template.layout === 'stacked' ? '1fr' : `repeat(${numCols}, 1fr)`, gap: template.layout === 'stacked' ? '1rem' : '0px' }}>
                     {template.columns.map((col, ci) => {
                         const chOffset = template.columns
                             .slice(0, ci)
                             .reduce((sum, c) => sum + c.topics.length, 0);
                         return (
-                            <TopicColumn
-                                key={ci}
-                                topics={col.topics}
-                                hours={colHours[ci] || []}
-                                onUpdate={(rowIdx, v) => updateColHourAt(ci, rowIdx, v)}
-                                editMode={editMode}
-                                showChNum={is2Col}
-                                chOffset={chOffset}
-                            />
+                            <div key={ci}>
+                                {col.heading && <div style={{ fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '2px' }}>{col.heading}</div>}
+                                <TopicColumn
+                                    topics={col.topics}
+                                    hours={colHours[ci] || []}
+                                    onUpdate={(rowIdx, v) => updateColHourAt(ci, rowIdx, v)}
+                                    editMode={editMode}
+                                    showChNum={is2Col || template.layout === 'stacked'}
+                                    chOffset={template.layout === 'stacked' ? 0 : chOffset}
+                                    layout={template.layout}
+                                />
+                            </div>
                         );
                     })}
                 </div>
 
                 {/* Comment for Barbering layout */}
-                {is2Col && (
+                {(is2Col && template.layout !== 'stacked') && (
                     <p style={{ fontSize: '0.75rem', fontStyle: 'italic', margin: '0.75rem 0 0' }}>
                         Comment: This document is not an official transcript. Students must submit a transcript request form to the registrar's office to obtain an official transcript.
                     </p>
@@ -460,15 +486,34 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
 
                 {/* Footer */}
                 <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                    <div style={{ width: '35%' }}>
-                        {!is2Col && (
-                            <p style={{ fontSize: '0.75rem', lineHeight: '1.3' }}>
+                    <div style={{ width: '45%' }}>
+                        {(!is2Col || template.layout === 'stacked') && (
+                            <p style={{ fontSize: '0.75rem', lineHeight: '1.3', marginBottom: '1rem', fontStyle: 'italic' }}>
                                 This official document is not an official transcript unless stamped with the school seal and has an authorized signature.
                             </p>
                         )}
-                        <div style={{ borderTop: '1px solid black', marginTop: '2.5rem', paddingTop: '0.25rem', fontSize: '0.85rem' }}>
-                            Authorized Personnel, Title
-                        </div>
+                        {template.signatures ? (
+                            <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
+                                {template.signatures.map((sig, i) => (
+                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'flex-end', gap: '1rem' }}>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ borderBottom: '1px solid black', height: '1.5rem' }}></div>
+                                            <div style={{ paddingTop: '2px', fontSize: '0.8rem' }}>{sig}</div>
+                                        </div>
+                                        <div style={{ width: '150px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                                                <span style={{ marginRight: '5px', fontSize: '0.8rem' }}>Date:</span>
+                                                <div style={{ borderBottom: '1px solid black', height: '1.5rem', flex: 1 }}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div style={{ borderTop: '1px solid black', marginTop: '2.5rem', paddingTop: '0.25rem', fontSize: '0.85rem' }}>
+                                Authorized Personnel, Title
+                            </div>
+                        )}
                     </div>
 
                     <div style={{ textAlign: 'center' }}>
@@ -483,10 +528,14 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                     </div>
 
                     <div style={{ width: '35%', textAlign: 'right' }}>
-                        <div style={{ marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-                            TRANSCRIPT ISSUE DATE: <Field editMode={editMode} value={header.issueDate} onChange={v => updateHeader('issueDate', v)} style={{ width: '100px' }} />
-                        </div>
-                        <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>STUDENT IS IN GOOD STANDING</div>
+                        {template.hideRightFooter !== true && (
+                            <>
+                                <div style={{ marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                                    TRANSCRIPT ISSUE DATE: <Field editMode={editMode} value={header.issueDate} onChange={v => updateHeader('issueDate', v)} style={{ width: '100px' }} />
+                                </div>
+                                <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>STUDENT IS IN GOOD STANDING</div>
+                            </>
+                        )}
                     </div>
                 </div>
 
