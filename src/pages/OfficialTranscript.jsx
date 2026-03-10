@@ -227,7 +227,7 @@ export default function OfficialTranscript({
                         src="/school-seal.jpg"
                         alt="School Seal"
                         style={{
-                            width: '60px', height: '60px',
+                            width: '120px', height: '120px',
                             borderRadius: '50%', objectFit: 'cover',
                             margin: '0 auto',
                         }}
