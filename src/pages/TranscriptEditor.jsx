@@ -588,7 +588,7 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
 
                     <div style={{ textAlign: 'center' }}>
                         <div style={{
-                            width: '90px', height: '90px',
+                            width: '180px', height: '180px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             margin: '0 auto'
                         }}>
