@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRequestById } from '../lib/data';
+import { getRequestById, getTranscriptByStudentId, saveTranscript } from '../lib/data';
 import { getTemplateForProgram } from '../data/programTemplates';
-import { Printer, ArrowLeft, Mail } from 'lucide-react';
+import { Printer, ArrowLeft, Save, Check } from 'lucide-react';
 import OfficialTranscript from './OfficialTranscript';
 
 export default function OfficialTranscriptPage() {
@@ -23,23 +23,36 @@ export default function OfficialTranscriptPage() {
     const [colHours, setColHours] = useState([]);
     const [grades, setGrades] = useState([]);
 
+    const [saveStatus, setSaveStatus] = useState('');
+
     useEffect(() => {
-        getRequestById(id).then(req => {
+        getRequestById(id).then(async req => {
             if (req) {
                 setRequest(req);
                 const tmpl = getTemplateForProgram(req.program);
                 setTemplate(tmpl);
                 const totalTopics = tmpl.columns.reduce((sum, c) => sum + c.topics.length, 0);
+
+                let existing = null;
+                if (req.transcriptId) {
+                    existing = await getTranscriptByStudentId(req.transcriptId);
+                }
+
                 setHeader(h => ({
                     ...h,
-                    studentName: `${req.firstName || ''} ${req.lastName || ''}`.trim(),
-                    program: tmpl.defaults.program || req.program || '',
-                    totalProgramHours: tmpl.defaults.totalProgramHours || '',
-                    totalAccumulated: tmpl.defaults.totalAccumulated || '',
-                    ceus: tmpl.defaults.ceus || '',
+                    studentName: existing?.header?.studentName || `${req.firstName || ''} ${req.lastName || ''}`.trim(),
+                    program: existing?.header?.program || tmpl.defaults.program || req.program || '',
+                    totalProgramHours: existing?.header?.totalProgramHours || tmpl.defaults.totalProgramHours || '',
+                    totalAccumulated: existing?.header?.totalAccumulated || tmpl.defaults.totalAccumulated || '',
+                    ceus: existing?.header?.ceus || tmpl.defaults.ceus || '',
+                    ...(existing?.header || {}),
                 }));
-                setColHours(tmpl.columns.map(col => col.topics.map(() => '')));
-                setGrades(Array(totalTopics).fill(''));
+
+                if (existing?.colHours) setColHours(existing.colHours);
+                else setColHours(tmpl.columns.map(col => col.topics.map(() => '')));
+
+                if (existing?.grades) setGrades(existing.grades);
+                else setGrades(Array(totalTopics).fill(''));
             }
             setLoading(false);
         });
@@ -49,6 +62,21 @@ export default function OfficialTranscriptPage() {
 
     const updateGrade = (idx, value) => {
         setGrades(prev => { const copy = [...prev]; copy[idx] = value; return copy; });
+    };
+
+    const handleSave = async () => {
+        setSaveStatus('saving');
+        await saveTranscript({
+            studentId: request.studentId || request.studentInfo?.id || request.id,
+            program: request.program,
+            header,
+            colHours,
+            grades,
+            status: 'complete',
+            lastModified: new Date().toISOString(),
+        });
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus(''), 2500);
     };
 
     if (loading) return <div style={{ padding: '2rem' }}>Loading...</div>;
@@ -62,6 +90,9 @@ export default function OfficialTranscriptPage() {
                     <ArrowLeft size={16} /> Back to Unofficial
                 </button>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <button className="btn btn-outline" onClick={handleSave} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', ...(saveStatus === 'saved' ? { color: '#16a34a', borderColor: '#16a34a' } : {}) }}>
+                        {saveStatus === 'saving' ? '⏳ Saving...' : saveStatus === 'saved' ? <><Check size={16} /> Saved!</> : <><Save size={16} /> Save</>}
+                    </button>
                     <button className="btn btn-outline" onClick={() => setEditMode(!editMode)}
                         style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         {editMode ? 'Preview' : 'Edit'}

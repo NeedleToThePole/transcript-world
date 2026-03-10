@@ -76,11 +76,15 @@ export default function OfficialTranscript({
             backgroundColor: 'white',
             padding: '0',
             margin: '0 auto',
-            maxWidth: '800px',
+            maxWidth: '100%',
+            width: '8.5in',
+            minHeight: '10.5in',
+            display: 'flex',
+            flexDirection: 'column',
             boxShadow: 'var(--shadow-lg)',
             fontFamily: '"Times New Roman", serif',
-            fontSize: '10px',
-            lineHeight: '1.2',
+            fontSize: '12px',
+            lineHeight: '1.3',
             position: 'relative',
             overflow: 'hidden',
         }}>
@@ -104,61 +108,22 @@ export default function OfficialTranscript({
                 Official Transcript
             </div>
 
-            {/* ═══ DOE Header ═══ */}
-            <div style={{
-                textAlign: 'center',
-                padding: '8px 12px 6px',
-                borderBottom: '2px solid #0891b2',
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    {/* Left logo — VI Department of Education */}
-                    <img
-                        src="/vi-doe-logo.png"
-                        alt="VI Department of Education"
-                        style={{
-                            width: '55px', height: '55px',
-                            borderRadius: '50%', objectFit: 'cover', flexShrink: 0,
-                        }}
-                    />
-
-                    <div style={{ flex: 1, padding: '0 8px' }}>
-                        <p style={{ fontSize: '9px', fontWeight: 'bold', letterSpacing: '0.5px', margin: '0 0 1px' }}>
-                            THE VIRGIN ISLANDS DEPARTMENT OF
-                        </p>
-                        <h1 style={{ fontSize: '18px', fontWeight: 'bold', margin: '0 0 2px', letterSpacing: '2px' }}>
-                            EDUCATION
-                        </h1>
-                        <p style={{ fontSize: '9px', fontWeight: 'bold', margin: '0' }}>RAPHAEL O. WHEATLEY SKILL CENTER</p>
-                        <p style={{ fontSize: '8px', fontStyle: 'italic', margin: '1px 0' }}>
-                            A Post-Secondary Career and Technical Education Institute
-                        </p>
-                        <p style={{ fontSize: '7.5px', fontWeight: 'bold', margin: '1px 0' }}>
-                            Dr. Mario Francis: Principal
-                        </p>
-                        <p style={{ fontSize: '7px', color: '#555', margin: '0' }}>
-                            P.O. Box 9337, St. Thomas, VI 00801 &nbsp;|&nbsp; Tel: (340) 774-6277 &nbsp;|&nbsp; mario.francis@vide.vi
-                        </p>
-                    </div>
-
-                    {/* Right seal — School Seal */}
-                    <img
-                        src="/school-seal.jpg"
-                        alt="Raphael O. Wheatley Skill Center Seal"
-                        style={{
-                            width: '55px', height: '55px',
-                            borderRadius: '50%', objectFit: 'cover', flexShrink: 0,
-                        }}
-                    />
-                </div>
+            {/* ═══ DOE Header (Letterhead Image) ═══ */}
+            <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+                <img
+                    src="/letterhead.jpg"
+                    alt="Raphael O. Wheatley Skill Center Letterhead"
+                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                />
             </div>
 
             {/* ═══ Student Info Box ═══ */}
-            <div style={{ border: border, margin: '6px 12px 5px', padding: '4px 6px', fontSize: '9.5px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+            <div style={{ border: border, margin: '8px 16px 16px', padding: '6px 8px', fontSize: '11px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                     <div>STUDENT'S NAME: <Field editMode={editMode} value={header.studentName} onChange={v => onHeaderChange('studentName', v)} /></div>
                     <div>PROGRAM OF STUDY: <Field editMode={editMode} value={header.program} onChange={v => onHeaderChange('program', v)} style={{ fontWeight: 'bold' }} /></div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                     <div>INSTRUCTOR: <Field editMode={editMode} value={header.instructor} onChange={v => onHeaderChange('instructor', v)} style={{ fontWeight: 'bold' }} /></div>
                     <div>COMPLETED PROGRAM: &nbsp;
                         <Field editMode={editMode} value={header.completedProgram || 'X'} onChange={v => onHeaderChange('completedProgram', v)} style={{ width: '14px', textAlign: 'center' }} /> YES &nbsp;&nbsp;
@@ -173,8 +138,8 @@ export default function OfficialTranscript({
             </div>
 
             {/* ═══ Course Table ═══ */}
-            <div style={{ margin: '0 12px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', border: border, fontSize: '9px' }}>
+            <div style={{ margin: '0 16px' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', border: border, fontSize: '11px' }}>
                     <thead>
                         <tr style={{ backgroundColor: '#d1fae5' }}>
                             <th style={{ border: border, padding: cellPad, textAlign: 'center', width: '52%' }}>Courses</th>
@@ -190,7 +155,7 @@ export default function OfficialTranscript({
                                     <td colSpan="4" style={{
                                         border: border, padding: cellPad,
                                         textAlign: 'center', fontWeight: 'bold',
-                                        textDecoration: 'underline', fontSize: '9px',
+                                        textDecoration: 'underline', fontSize: '11px',
                                     }}>
                                         {term.label}
                                     </td>
@@ -237,19 +202,21 @@ export default function OfficialTranscript({
 
             {/* ═══ Footer ═══ */}
             <div style={{
-                margin: '6px 12px 8px',
+                marginTop: 'auto',
+                marginBottom: '20px',
+                padding: '0 16px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'flex-end',
-                fontSize: '8.5px',
+                fontSize: '10px',
             }}>
                 {/* Left — Disclaimer + Signature */}
-                <div style={{ width: '32%', border: border, padding: '5px', fontSize: '7.5px' }}>
-                    <p style={{ fontStyle: 'italic', lineHeight: '1.2', margin: '0 0 8px' }}>
+                <div style={{ width: '32%', border: border, padding: '8px', fontSize: '9px' }}>
+                    <p style={{ fontStyle: 'italic', lineHeight: '1.3', margin: '0 0 12px' }}>
                         This document is not an official transcript unless stamped with the school seal and has an authorized signature.
                     </p>
-                    <p style={{ textAlign: 'center', margin: '0 0 2px', fontWeight: 'bold', fontSize: '8px' }}>Principal</p>
-                    <div style={{ borderTop: '1px solid black', marginTop: '12px', paddingTop: '2px', textAlign: 'center' }}>
+                    <p style={{ textAlign: 'center', margin: '0 0 4px', fontWeight: 'bold', fontSize: '10px' }}>Principal</p>
+                    <div style={{ borderTop: '1px solid black', marginTop: '16px', paddingTop: '4px', textAlign: 'center' }}>
                         Authorized Personnel, Title
                     </div>
                 </div>
@@ -268,8 +235,8 @@ export default function OfficialTranscript({
                 </div>
 
                 {/* Right — Issue Date, Hours, Graduation, Standing */}
-                <div style={{ width: '35%', fontSize: '9px' }}>
-                    <div style={{ marginBottom: '3px' }}>
+                <div style={{ width: '36%', fontSize: '11px' }}>
+                    <div style={{ marginBottom: '5px' }}>
                         TRANSCRIPT ISSUE DATE: <Field editMode={editMode} value={header.issueDate} onChange={v => onHeaderChange('issueDate', v)} />
                     </div>
                     <div style={{ marginBottom: '3px' }}>
