@@ -530,14 +530,37 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                         {template.signatures ? (
                             <div style={{ marginTop: '1rem', fontSize: '0.85rem' }}>
                                 {template.signatures.map((sig, i) => (
-                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'flex-end', gap: '1rem' }}>
-                                        <div style={{ flex: 1 }}>
+                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', alignItems: 'flex-end', gap: '1rem' }}>
+                                        <div style={{ flex: 1, position: 'relative' }}>
+                                            <div style={{ position: 'absolute', bottom: '1.5rem', width: '100%' }}>
+                                                {editMode ? (
+                                                    <input
+                                                        style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', fontFamily: '"Brush Script MT", "Comic Sans MS", cursive', fontSize: '1.4rem', padding: '0 0.25rem' }}
+                                                        value={header[`signature_${i}`] || ''}
+                                                        onChange={e => updateHeader(`signature_${i}`, e.target.value)}
+                                                    />
+                                                ) : (
+                                                    <div style={{ fontFamily: '"Brush Script MT", "Comic Sans MS", cursive', fontSize: '1.4rem', padding: '0 0.25rem', height: '1.4rem' }}>{header[`signature_${i}`] || ''}</div>
+                                                )}
+                                            </div>
                                             <div style={{ borderBottom: '1px solid black', height: '1.5rem' }}></div>
                                             <div style={{ paddingTop: '2px', fontSize: '0.8rem' }}>{sig}</div>
                                         </div>
                                         <div style={{ width: '150px' }}>
-                                            <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                                            <div style={{ display: 'flex', alignItems: 'flex-end', position: 'relative' }}>
                                                 <span style={{ marginRight: '5px', fontSize: '0.8rem' }}>Date:</span>
+                                                <div style={{ position: 'absolute', bottom: '2px', left: '35px', width: 'calc(100% - 35px)' }}>
+                                                    {editMode ? (
+                                                        <input
+                                                            style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', fontSize: '0.9rem', padding: '0 0.25rem' }}
+                                                            value={header[`sigDate_${i}`] || ''}
+                                                            onChange={e => updateHeader(`sigDate_${i}`, e.target.value)}
+                                                            placeholder="MM/DD/YYYY"
+                                                        />
+                                                    ) : (
+                                                        <div style={{ fontSize: '0.9rem', padding: '0 0.25rem', height: '1.1rem' }}>{header[`sigDate_${i}`] || ''}</div>
+                                                    )}
+                                                </div>
                                                 <div style={{ borderBottom: '1px solid black', height: '1.5rem', flex: 1 }}></div>
                                             </div>
                                         </div>
@@ -545,8 +568,20 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                                 ))}
                             </div>
                         ) : (
-                            <div style={{ borderTop: '1px solid black', marginTop: '2.5rem', paddingTop: '0.25rem', fontSize: '0.85rem' }}>
-                                Authorized Personnel, Title
+                            <div style={{ position: 'relative', marginTop: '3.5rem' }}>
+                                <div style={{ position: 'absolute', bottom: '1.5rem', width: '100%' }}>
+                                    {editMode ? (
+                                        <input
+                                            style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', fontFamily: '"Brush Script MT", "Comic Sans MS", cursive', fontSize: '1.4rem', padding: '0 0.25rem' }}
+                                            value={header[`signature_0`] || ''}
+                                            onChange={e => updateHeader(`signature_0`, e.target.value)}
+                                        />
+                                    ) : (
+                                        <div style={{ fontFamily: '"Brush Script MT", "Comic Sans MS", cursive', fontSize: '1.4rem', padding: '0 0.25rem', height: '1.4rem' }}>{header[`signature_0`] || ''}</div>
+                                    )}
+                                </div>
+                                <div style={{ borderBottom: '1px solid black', height: '1.5rem' }}></div>
+                                <div style={{ paddingTop: '2px', fontSize: '0.85rem' }}>Authorized Personnel, Title</div>
                             </div>
                         )}
                     </div>
@@ -554,11 +589,10 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                     <div style={{ textAlign: 'center' }}>
                         <div style={{
                             width: '90px', height: '90px',
-                            border: '2px solid #b8860b', borderRadius: '50%',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            margin: '0 auto', fontSize: '0.7rem', color: '#b8860b'
+                            margin: '0 auto'
                         }}>
-                            SEAL
+                            <img src="/school-seal.jpg" alt="Raphael O Wheatley Seal" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                         </div>
                     </div>
 
