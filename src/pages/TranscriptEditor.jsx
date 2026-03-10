@@ -146,7 +146,6 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
 
                     setHeader(h => ({
                         ...h,
-                        studentName: `${stu.firstName || ''} ${stu.lastName || ''}`.trim(),
                         program: tmpl.defaults.program || stu.program || '',
                         totalClassHours: existing?.header?.totalClassHours || tmpl.defaults.totalClassHours || '',
                         totalExternshipHours: existing?.header?.totalExternshipHours || tmpl.defaults.totalExternshipHours || '',

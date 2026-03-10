@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { getRequests, updateRequestStatus } from '../lib/data';
 import { Link } from 'react-router-dom';
-import { Eye, Check, X, Printer, Mail, FileText } from 'lucide-react';
+import { Eye, Check, X, Printer, Mail, FileText, Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
 
 export default function RequestQueue() {
     const [requests, setRequests] = useState([]);
     const [filter, setFilter] = useState('All');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [sortConfig, setSortConfig] = useState({ key: 'requestDate', direction: 'desc' });
+    const [expandedIds, setExpandedIds] = useState(new Set());
 
     const fetchRequests = async () => {
         const data = await getRequests();
@@ -23,9 +26,55 @@ export default function RequestQueue() {
 
     const statuses = ['All', 'Ready for Review', 'Pending', 'Pending — Awaiting Grades', 'Processing', 'Completed'];
 
-    const filteredRequests = filter === 'All'
-        ? requests
-        : requests.filter(r => r.status === filter || (filter === 'Pending' && r.status?.startsWith('Pending')));
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const toggleExpand = (id) => {
+        const newExpanded = new Set(expandedIds);
+        if (newExpanded.has(id)) newExpanded.delete(id);
+        else newExpanded.add(id);
+        setExpandedIds(newExpanded);
+    };
+
+    // Filter by search query
+    const searchedRequests = requests.filter(r => {
+        if (!searchQuery) return true;
+        const q = searchQuery.toLowerCase();
+        const fullName = `${r.firstName} ${r.lastName}`.toLowerCase();
+        return fullName.includes(q) || (r.studentId && String(r.studentId).includes(q));
+    });
+
+    // Filter by status
+    const filteredByStatus = filter === 'All'
+        ? searchedRequests
+        : searchedRequests.filter(r => r.status === filter || (filter === 'Pending' && r.status?.startsWith('Pending')));
+
+    // Sort requests
+    const sortedRequests = [...filteredByStatus].sort((a, b) => {
+        let aValue = a[sortConfig.key] || '';
+        let bValue = b[sortConfig.key] || '';
+
+        if (sortConfig.key === 'name') {
+            aValue = `${a.firstName} ${a.lastName}`.toLowerCase();
+            bValue = `${b.firstName} ${b.lastName}`.toLowerCase();
+        } else if (typeof aValue === 'string') {
+            aValue = aValue.toLowerCase();
+            bValue = bValue.toLowerCase();
+        }
+
+        if (aValue < bValue) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+    });
 
     const statusBadge = (status) => {
         const colors = {
@@ -51,49 +100,69 @@ export default function RequestQueue() {
         );
     };
 
-    const [expandedIds, setExpandedIds] = useState(new Set());
-
-    const toggleExpand = (id) => {
-        const newExpanded = new Set(expandedIds);
-        if (newExpanded.has(id)) newExpanded.delete(id);
-        else newExpanded.add(id);
-        setExpandedIds(newExpanded);
+    const SortIcon = ({ columnKey }) => {
+        if (sortConfig.key !== columnKey) return <ArrowUpDown size={14} style={{ opacity: 0.3, marginLeft: '0.3rem' }} />;
+        return sortConfig.direction === 'asc'
+            ? <ChevronUp size={14} style={{ marginLeft: '0.3rem' }} />
+            : <ChevronDown size={14} style={{ marginLeft: '0.3rem' }} />;
     };
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <h2>Request Queue</h2>
-                <select
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                    style={{ width: 'auto', padding: '0.5rem 2rem' }}
-                >
-                    {statuses.map(s => <option key={s}>{s}</option>)}
-                </select>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <div style={{ position: 'relative' }}>
+                        <Search size={18} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                        <input
+                            type="text"
+                            placeholder="Search by name or ID..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            style={{ padding: '0.5rem 1rem 0.5rem 2.25rem', borderRadius: '4px', border: '1px solid #cbd5e1', width: '250px' }}
+                        />
+                    </div>
+                    <select
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                        style={{ width: 'auto', padding: '0.5rem 2rem' }}
+                    >
+                        {statuses.map(s => <option key={s}>{s}</option>)}
+                    </select>
+                </div>
             </div>
 
             <div className="card">
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                         <tr style={{ textAlign: 'left', borderBottom: '2px solid #f1f5f9' }}>
-                            <th style={{ padding: '1rem' }}>Student</th>
-                            <th style={{ padding: '1rem' }}>Program</th>
-                            <th style={{ padding: '1rem' }}>Type</th>
-                            <th style={{ padding: '1rem' }}>Date</th>
-                            <th style={{ padding: '1rem' }}>Status</th>
+                            <th style={{ padding: '1rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('name')}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>Student <SortIcon columnKey="name" /></div>
+                            </th>
+                            <th style={{ padding: '1rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('program')}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>Program <SortIcon columnKey="program" /></div>
+                            </th>
+                            <th style={{ padding: '1rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('type')}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>Type <SortIcon columnKey="type" /></div>
+                            </th>
+                            <th style={{ padding: '1rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('requestDate')}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>Date <SortIcon columnKey="requestDate" /></div>
+                            </th>
+                            <th style={{ padding: '1rem', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('status')}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>Status <SortIcon columnKey="status" /></div>
+                            </th>
                             <th style={{ padding: '1rem' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredRequests.length === 0 && (
+                        {sortedRequests.length === 0 && (
                             <tr>
                                 <td colSpan="6" style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
-                                    No requests {filter !== 'All' ? `with status "${filter}"` : 'yet'}.
+                                    No requests found.
                                 </td>
                             </tr>
                         )}
-                        {filteredRequests.map(req => (
+                        {sortedRequests.map(req => (
                             <React.Fragment key={req.id}>
                                 <tr style={{ borderBottom: expandedIds.has(req.id) ? 'none' : '1px solid #f1f5f9', cursor: 'pointer', transition: 'background 0.2s' }} onClick={() => toggleExpand(req.id)} className="hover-row">
                                     <td style={{ padding: '1rem' }}>
