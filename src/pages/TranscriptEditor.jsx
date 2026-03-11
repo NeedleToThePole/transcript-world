@@ -251,7 +251,7 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
         if (!header.program || !colHours || colHours.length === 0) return;
 
         // Opt-in list of programs for auto-calculation
-        const autoCalcPrograms = ['Barbering'];
+        const autoCalcPrograms = ['Barbering', 'Cosmetology Fundamentals', 'Cosmetology Foundation'];
 
         if (autoCalcPrograms.includes(header.program)) {
             // Calculate total accumulated hours
@@ -491,7 +491,11 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                 )}
 
                 {/* Topics Table — adapts to 2col, 3col, or stacked layout */}
-                <div style={{ display: 'grid', gridTemplateColumns: template.layout === 'stacked' ? '1fr' : `repeat(${numCols}, 1fr)`, gap: template.layout === 'stacked' ? '1rem' : '0px' }}>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: template.gridCols ? `repeat(${template.gridCols}, 1fr)` : (template.layout === 'stacked' ? '1fr' : `repeat(${numCols}, 1fr)`),
+                    gap: '1rem 0px'
+                }}>
                     {template.columns.map((col, ci) => {
                         const chOffset = template.columns
                             .slice(0, ci)
@@ -516,7 +520,7 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                 </div>
 
                 {/* Comment for Barbering layout */}
-                {(is2Col && template.layout !== 'stacked') && (
+                {(is2Col && template.layout !== 'stacked' && template.layout !== 'stacked-grid') && (
                     <p style={{ fontSize: '0.75rem', fontStyle: 'italic', margin: '0.75rem 0 0' }}>
                         Comment: This document is not an official transcript. Students must submit a transcript request form to the registrar's office to obtain an official transcript.
                     </p>
