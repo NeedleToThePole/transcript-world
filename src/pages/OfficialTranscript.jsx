@@ -71,6 +71,22 @@ export default function OfficialTranscript({
 
     const terms = splitIntoTerms(allTopics, allGrades, [], allHoursComp);
 
+    // Dynamically adjust table font size and padding to ensure it fits on one page
+    const totalRowsCount = allTopics.length + terms.length;
+    let tableFontSize = '11px';
+    let dynamicCellPad = '2px 4px';
+    let termLabelFontSize = '11px';
+
+    if (totalRowsCount >= 40) {
+        tableFontSize = '9px';
+        dynamicCellPad = '1px 2px';
+        termLabelFontSize = '9.5px';
+    } else if (totalRowsCount > 30) {
+        tableFontSize = '10px';
+        dynamicCellPad = '1px 3px';
+        termLabelFontSize = '10.5px';
+    }
+
     return (
         <div className="official-transcript-paper" style={{
             backgroundColor: 'white',
@@ -139,13 +155,13 @@ export default function OfficialTranscript({
 
             {/* ═══ Course Table ═══ */}
             <div style={{ margin: '0 16px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', border: border, fontSize: '11px' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', border: border, fontSize: tableFontSize }}>
                     <thead>
                         <tr style={{ backgroundColor: '#d1fae5' }}>
-                            <th style={{ border: border, padding: cellPad, textAlign: 'center', width: '52%' }}>Courses</th>
-                            <th style={{ border: border, padding: cellPad, textAlign: 'center', width: '12%' }}>Final<br />Grade</th>
-                            <th style={{ border: border, padding: cellPad, textAlign: 'center', width: '12%' }}>Hours<br />Required</th>
-                            <th style={{ border: border, padding: cellPad, textAlign: 'center', width: '12%' }}>Hours<br />Completed</th>
+                            <th style={{ border: border, padding: dynamicCellPad, textAlign: 'center', width: '52%' }}>Courses</th>
+                            <th style={{ border: border, padding: dynamicCellPad, textAlign: 'center', width: '12%' }}>Final<br />Grade</th>
+                            <th style={{ border: border, padding: dynamicCellPad, textAlign: 'center', width: '12%' }}>Hours<br />Required</th>
+                            <th style={{ border: border, padding: dynamicCellPad, textAlign: 'center', width: '12%' }}>Hours<br />Completed</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -153,9 +169,9 @@ export default function OfficialTranscript({
                             <React.Fragment key={ti}>
                                 <tr>
                                     <td colSpan="4" style={{
-                                        border: border, padding: cellPad,
+                                        border: border, padding: dynamicCellPad,
                                         textAlign: 'center', fontWeight: 'bold',
-                                        textDecoration: 'underline', fontSize: '11px',
+                                        textDecoration: 'underline', fontSize: termLabelFontSize,
                                     }}>
                                         {term.label}
                                     </td>
@@ -165,10 +181,10 @@ export default function OfficialTranscript({
                                         .findIndex(t => t.name === course.name && t.hoursReq === course.hoursReq);
                                     return (
                                         <tr key={ci}>
-                                            <td style={{ border: border, padding: cellPad, textAlign: 'center' }}>
+                                            <td style={{ border: border, padding: dynamicCellPad, textAlign: 'center' }}>
                                                 {course.name}
                                             </td>
-                                            <td style={{ border: border, padding: cellPad, textAlign: 'center' }}>
+                                            <td style={{ border: border, padding: dynamicCellPad, textAlign: 'center' }}>
                                                 {editMode ? (
                                                     <input
                                                         style={{
@@ -185,10 +201,10 @@ export default function OfficialTranscript({
                                                     <span>{allGrades[globalIdx] || ''}</span>
                                                 )}
                                             </td>
-                                            <td style={{ border: border, padding: cellPad, textAlign: 'center' }}>
+                                            <td style={{ border: border, padding: dynamicCellPad, textAlign: 'center' }}>
                                                 {course.hoursReq}
                                             </td>
-                                            <td style={{ border: border, padding: cellPad, textAlign: 'center' }}>
+                                            <td style={{ border: border, padding: dynamicCellPad, textAlign: 'center' }}>
                                                 {course.hoursComp || ''}
                                             </td>
                                         </tr>
