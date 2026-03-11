@@ -76,24 +76,15 @@ export default function OfficialTranscript({
     let tableFontSize = '11px';
     let dynamicCellPad = '2px 4px';
     let termLabelFontSize = '11px';
-    let headerPaddingTop = '25%';
-    let infoBoxMargin = '8px 16px 16px';
-    let footerBottomMargin = '20px';
 
     if (totalRowsCount >= 40) {
-        tableFontSize = '8.5px';
+        tableFontSize = '9px';
         dynamicCellPad = '1px 2px';
-        termLabelFontSize = '9px';
-        headerPaddingTop = '21.5%';
-        infoBoxMargin = '4px 16px 8px';
-        footerBottomMargin = '8px';
+        termLabelFontSize = '9.5px';
     } else if (totalRowsCount > 30) {
         tableFontSize = '10px';
         dynamicCellPad = '1px 3px';
         termLabelFontSize = '10.5px';
-        headerPaddingTop = '23%';
-        infoBoxMargin = '6px 16px 10px';
-        footerBottomMargin = '15px';
     }
 
     return (
@@ -134,7 +125,7 @@ export default function OfficialTranscript({
             </div>
 
             {/* ═══ DOE Header (Letterhead Image Cropped) ═══ */}
-            <div style={{ position: 'relative', width: '100%', paddingTop: headerPaddingTop, overflow: 'hidden', marginBottom: '8px' }}>
+            <div style={{ position: 'relative', width: '100%', paddingTop: '25%', overflow: 'hidden', marginBottom: '8px' }}>
                 <img
                     src="/letterhead.jpg"
                     alt="Raphael O. Wheatley Skill Center Letterhead"
@@ -143,8 +134,8 @@ export default function OfficialTranscript({
             </div>
 
             {/* ═══ Student Info Box ═══ */}
-            <div style={{ border: border, margin: infoBoxMargin, padding: '4px 8px', fontSize: '11px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+            <div style={{ border: border, margin: '8px 16px 16px', padding: '6px 8px', fontSize: '11px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                     <div>STUDENT'S NAME: <Field editMode={editMode} value={header.studentName} onChange={v => onHeaderChange('studentName', v)} /></div>
                     <div>PROGRAM OF STUDY: <Field editMode={editMode} value={header.program} onChange={v => onHeaderChange('program', v)} style={{ fontWeight: 'bold' }} /></div>
                 </div>
@@ -228,7 +219,7 @@ export default function OfficialTranscript({
             {/* ═══ Footer ═══ */}
             <div style={{
                 marginTop: 'auto',
-                marginBottom: footerBottomMargin,
+                marginBottom: '20px',
                 padding: '0 16px',
                 display: 'flex',
                 justifyContent: 'space-between',
