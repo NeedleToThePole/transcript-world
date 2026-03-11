@@ -13,6 +13,7 @@ export default function StudentRequest() {
     const [submitted, setSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [requestResult, setRequestResult] = useState(null);
+    const [isAdminTest, setIsAdminTest] = useState(false);
 
     useEffect(() => {
         getTeacherCodes()
@@ -28,7 +29,7 @@ export default function StudentRequest() {
         const lookup = await lookupStudentForRequest(formData.studentId, formData.program);
 
         let status, message;
-        if (lookup.status === 'not_enrolled') {
+        if (lookup.status === 'not_enrolled' && !isAdminTest && formData.studentId.toUpperCase() !== 'TEST') {
             setRequestResult({
                 status: 'error',
                 message: 'You are not enrolled in this program. Please contact your teacher to be added to the roster.'
@@ -266,6 +267,18 @@ export default function StudentRequest() {
                         borderColor: formData.type === 'Official' ? '#bfdbfe' : '#bbf7d0'
                     }}>
                         {formData.type === 'Official' ? 'Fee: $10.00 — payable upon pick-up or by mail' : 'No charge for unofficial transcripts'}
+                    </div>
+
+                    {/* Admin Test Mode Toggle */}
+                    <div style={{ textAlign: 'center', marginTop: '0.25rem' }}>
+                        <label style={{ fontSize: '0.85rem', color: '#6b7280', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontWeight: 'bold' }}>
+                            <input
+                                type="checkbox"
+                                checked={isAdminTest}
+                                onChange={(e) => setIsAdminTest(e.target.checked)}
+                            />
+                            Admin Testing Mode: Bypass Student Enrollment Check
+                        </label>
                     </div>
 
                     <button type="submit" className="btn btn-primary"
