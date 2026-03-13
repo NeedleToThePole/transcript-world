@@ -506,6 +506,62 @@ const PATIENT_CARE_TECH = {
             ],
         },
     ],
+};// ──────────────── Esthetics ────────────────
+const ESTHETICS = {
+    title: 'Esthetics Transcript Card',
+    layout: 'stacked',
+    gridCols: 2,
+    hideRightFooter: true,
+    signatures: [
+        'Instructor',
+        'Earlyn Edwards- Cosmetology Instructor Chairperson'
+    ],
+    defaults: {
+        program: 'Esthetics',
+        totalClassHours: '',
+        totalExternshipHours: '',
+        totalProgramHours: '600',
+        totalAccumulated: '',
+        ceus: '',
+    },
+    columns: [
+        {
+            heading: 'SEMESTER I',
+            topics: [
+                { name: 'Infection Control', hoursReq: 50 },
+                { name: 'Anatomy & Physiology', hoursReq: 30 },
+                { name: 'Physiology and Histology of the Skin', hoursReq: 30 },
+                { name: 'Disorders and Diseases of the Skin', hoursReq: 25 },
+                { name: 'Skin Analysis', hoursReq: 25 },
+                { name: 'Skin Care Products: Chemistry, Ingredients, and Selection', hoursReq: 25 },
+                { name: 'The Treatment Room', hoursReq: 25 },
+                { name: 'Facial Treatments', hoursReq: 25 },
+                { name: 'Facial Massage', hoursReq: 40 },
+                { name: 'Facial Devices and Technology', hoursReq: 35 },
+                { name: 'Hair Removal', hoursReq: 50 },
+                { name: 'Evaluation', hoursReq: 5 },
+                { name: 'Lab Practical', hoursReq: 5 },
+            ],
+        },
+        {
+            heading: 'SEMESTER II',
+            topics: [
+                { name: 'Makeup Essentials', hoursReq: 45 },
+                { name: 'Advanced Topics and Treatments', hoursReq: 50 },
+                { name: 'Chemistry and Chemical Safety', hoursReq: 5 },
+                { name: 'Electricity and Electrical Safety', hoursReq: 5 },
+                { name: 'Life Skills', hoursReq: 1 },
+                { name: 'Professional Image', hoursReq: 1 },
+                { name: 'Communicating for Success', hoursReq: 1 },
+                { name: 'The Healthy Professional', hoursReq: 1 },
+                { name: 'Career Planning', hoursReq: 10 },
+                { name: 'History & Career Opportunities', hoursReq: 1 },
+                { name: 'Evaluation', hoursReq: 5 },
+                { name: 'Lab Practical', hoursReq: 5 },
+                { name: 'Externship:', hoursReq: 100 },
+            ],
+        },
+    ]
 };
 
 // ───────────────────────── Registry ─────────────────────────
@@ -519,6 +575,7 @@ export function getTemplateForProgram(programName) {
     if (p.includes('hair braid')) return HAIR_BRAIDING;
     if (p.includes('cosmetology') && p.includes('foundation')) return COSMETOLOGY_FOUNDATION;
     if (p.includes('cosmetology')) return COSMETOLOGY_FUNDAMENTALS;
+    if (p.includes('esthetic') || p.includes('esthetics')) return ESTHETICS;
     if (p.includes('cna') && p.includes('pct')) return CNA_PCT;
     if (p.includes('nursing assistant') || p.includes('cna')) return NURSING_ASSISTANT;
     if (p.includes('patient care') || p.includes('pct')) return PATIENT_CARE_TECH;
@@ -532,6 +589,7 @@ export {
     MED_ADMIN_ASSISTANT,
     COSMETOLOGY_FOUNDATION,
     COSMETOLOGY_FUNDAMENTALS,
+    ESTHETICS,
     HAIR_BRAIDING,
     CNA_PCT,
     NURSING_ASSISTANT,
