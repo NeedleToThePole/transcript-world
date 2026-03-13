@@ -80,7 +80,7 @@ export default function OfficialTranscript({
     const hPT = isCompact ? '28.8%' : '32%';          // 32% relative crop (32% of 90% is 28.8%) 
     const iBM = isCompact ? '2px 16px 6px' : '8px 16px 16px'; // info box margin
     const fMB = isCompact ? '4px' : '20px';           // footer margin bottom
-    const sealSz = isCompact ? '65px' : '90px';       // seal size
+    const sealSz = isCompact ? '81px' : '112px';      // seal size (increased by 25%)
     const ftrPad = isCompact ? '2px' : '8px';         // footer disclaimer padding
     const ftrSigMT = isCompact ? '6px' : '16px';      // footer signature margin-top
 
