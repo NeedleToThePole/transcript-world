@@ -71,6 +71,19 @@ export default function OfficialTranscript({
 
     const terms = splitIntoTerms(allTopics, allGrades, [], allHoursComp);
 
+    // Dynamic sizing: count total rows (courses + term headers) to decide compression
+    const totalRows = allTopics.length + terms.length;
+    const isCompact = totalRows >= 35;
+    const tFS = isCompact ? '8.7px' : '11px';       // table font size
+    const tCP = isCompact ? '1px 2px' : '2px 4px'; // table cell padding
+    const headWidth = isCompact ? '90%' : '100%';   // scale the header overall
+    const hPT = isCompact ? '28.8%' : '32%';        // 32% relative crop (32% of 90% is 28.8%) 
+    const iBM = isCompact ? '2px 16px 6px' : '8px 16px 16px'; // info box margin
+    const fMB = isCompact ? '4px' : '20px';         // footer margin bottom
+    const sealSz = isCompact ? '65px' : '90px';     // seal size
+    const ftrPad = isCompact ? '2px' : '8px';       // footer disclaimer padding
+    const ftrSigMT = isCompact ? '6px' : '16px';    // footer signature margin-top
+
     return (
         <div className="official-transcript-paper" style={{
             backgroundColor: 'white',
@@ -108,22 +121,24 @@ export default function OfficialTranscript({
                 Official Transcript
             </div>
 
-            {/* ═══ DOE Header (Letterhead Image Cropped) ═══ */}
-            <div style={{ position: 'relative', width: '100%', paddingTop: '25%', overflow: 'hidden', marginBottom: '8px' }}>
-                <img
-                    src="/letterhead.jpg"
-                    alt="Raphael O. Wheatley Skill Center Letterhead"
-                    style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: 'auto', display: 'block' }}
-                />
+            {/* ═══ DOE Header (Letterhead Image Scaled) ═══ */}
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: isCompact ? '4px' : '8px' }}>
+                <div style={{ position: 'relative', width: headWidth, paddingTop: hPT, overflow: 'hidden' }}>
+                    <img
+                        src="/letterhead.jpg"
+                        alt="Raphael O. Wheatley Skill Center Letterhead"
+                        style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: 'auto', display: 'block' }}
+                    />
+                </div>
             </div>
 
             {/* ═══ Student Info Box ═══ */}
-            <div style={{ border: border, margin: '8px 16px 16px', padding: '6px 8px', fontSize: '11px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+            <div style={{ border: border, margin: iBM, padding: isCompact ? '4px 8px' : '6px 8px', fontSize: isCompact ? '10px' : '11px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: isCompact ? '2px' : '4px' }}>
                     <div>STUDENT'S NAME: <Field editMode={editMode} value={header.studentName} onChange={v => onHeaderChange('studentName', v)} /></div>
                     <div>PROGRAM OF STUDY: <Field editMode={editMode} value={header.program} onChange={v => onHeaderChange('program', v)} style={{ fontWeight: 'bold' }} /></div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: isCompact ? '1px' : '4px' }}>
                     <div>INSTRUCTOR: <Field editMode={editMode} value={header.instructor} onChange={v => onHeaderChange('instructor', v)} style={{ fontWeight: 'bold' }} /></div>
                     <div>COMPLETED PROGRAM: &nbsp;
                         <Field editMode={editMode} value={header.completedProgram || 'X'} onChange={v => onHeaderChange('completedProgram', v)} style={{ width: '14px', textAlign: 'center' }} /> YES &nbsp;&nbsp;
@@ -138,14 +153,14 @@ export default function OfficialTranscript({
             </div>
 
             {/* ═══ Course Table ═══ */}
-            <div style={{ margin: '0 16px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', border: border, fontSize: '11px' }}>
+            <div style={{ margin: isCompact ? '0 12px' : '0 16px' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', border: border, fontSize: tFS }}>
                     <thead>
                         <tr style={{ backgroundColor: '#d1fae5' }}>
-                            <th style={{ border: border, padding: cellPad, textAlign: 'center', width: '52%' }}>Courses</th>
-                            <th style={{ border: border, padding: cellPad, textAlign: 'center', width: '12%' }}>Final<br />Grade</th>
-                            <th style={{ border: border, padding: cellPad, textAlign: 'center', width: '12%' }}>Hours<br />Required</th>
-                            <th style={{ border: border, padding: cellPad, textAlign: 'center', width: '12%' }}>Hours<br />Completed</th>
+                            <th style={{ border: border, padding: tCP, textAlign: 'center', width: '52%' }}>Courses</th>
+                            <th style={{ border: border, padding: tCP, textAlign: 'center', width: '12%' }}>Final<br />Grade</th>
+                            <th style={{ border: border, padding: tCP, textAlign: 'center', width: '12%' }}>Hours<br />Required</th>
+                            <th style={{ border: border, padding: tCP, textAlign: 'center', width: '12%' }}>Hours<br />Completed</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -153,9 +168,9 @@ export default function OfficialTranscript({
                             <React.Fragment key={ti}>
                                 <tr>
                                     <td colSpan="4" style={{
-                                        border: border, padding: cellPad,
+                                        border: border, padding: tCP,
                                         textAlign: 'center', fontWeight: 'bold',
-                                        textDecoration: 'underline', fontSize: '11px',
+                                        textDecoration: 'underline', fontSize: tFS,
                                     }}>
                                         {term.label}
                                     </td>
@@ -165,10 +180,10 @@ export default function OfficialTranscript({
                                         .findIndex(t => t.name === course.name && t.hoursReq === course.hoursReq);
                                     return (
                                         <tr key={ci}>
-                                            <td style={{ border: border, padding: cellPad, textAlign: 'center' }}>
+                                            <td style={{ border: border, padding: tCP, textAlign: 'center' }}>
                                                 {course.name}
                                             </td>
-                                            <td style={{ border: border, padding: cellPad, textAlign: 'center' }}>
+                                            <td style={{ border: border, padding: tCP, textAlign: 'center' }}>
                                                 {editMode ? (
                                                     <input
                                                         style={{
@@ -185,10 +200,10 @@ export default function OfficialTranscript({
                                                     <span>{allGrades[globalIdx] || ''}</span>
                                                 )}
                                             </td>
-                                            <td style={{ border: border, padding: cellPad, textAlign: 'center' }}>
+                                            <td style={{ border: border, padding: tCP, textAlign: 'center' }}>
                                                 {course.hoursReq}
                                             </td>
-                                            <td style={{ border: border, padding: cellPad, textAlign: 'center' }}>
+                                            <td style={{ border: border, padding: tCP, textAlign: 'center' }}>
                                                 {course.hoursComp || ''}
                                             </td>
                                         </tr>
@@ -203,7 +218,7 @@ export default function OfficialTranscript({
             {/* ═══ Footer ═══ */}
             <div style={{
                 marginTop: 'auto',
-                marginBottom: '20px',
+                marginBottom: fMB,
                 padding: '0 16px',
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -211,12 +226,12 @@ export default function OfficialTranscript({
                 fontSize: '10px',
             }}>
                 {/* Left — Disclaimer + Signature */}
-                <div style={{ width: '32%', border: border, padding: '8px', fontSize: '9px' }}>
-                    <p style={{ fontStyle: 'italic', lineHeight: '1.3', margin: '0 0 12px' }}>
+                <div style={{ width: '32%', border: border, padding: ftrPad, fontSize: isCompact ? '7.5px' : '9px' }}>
+                    <p style={{ fontStyle: 'italic', lineHeight: '1.3', margin: isCompact ? '0 0 4px' : '0 0 12px' }}>
                         This document is not an official transcript unless stamped with the school seal and has an authorized signature.
                     </p>
-                    <p style={{ textAlign: 'center', margin: '0 0 4px', fontWeight: 'bold', fontSize: '10px' }}>Principal</p>
-                    <div style={{ borderTop: '1px solid black', marginTop: '16px', paddingTop: '4px', textAlign: 'center' }}>
+                    <p style={{ textAlign: 'center', margin: '0 0 2px', fontWeight: 'bold', fontSize: isCompact ? '8px' : '10px' }}>Principal</p>
+                    <div style={{ borderTop: '1px solid black', marginTop: ftrSigMT, paddingTop: '2px', textAlign: 'center' }}>
                         Authorized Personnel, Title
                     </div>
                 </div>
@@ -227,7 +242,7 @@ export default function OfficialTranscript({
                         src="/school-seal.jpg"
                         alt="School Seal"
                         style={{
-                            width: '90px', height: '90px',
+                            width: sealSz, height: sealSz,
                             borderRadius: '50%', objectFit: 'cover',
                             margin: '0 auto',
                         }}
@@ -235,14 +250,14 @@ export default function OfficialTranscript({
                 </div>
 
                 {/* Right — Issue Date, Hours, Graduation, Standing */}
-                <div style={{ width: '36%', fontSize: '11px' }}>
-                    <div style={{ marginBottom: '5px' }}>
+                <div style={{ width: '36%', fontSize: isCompact ? '9px' : '11px' }}>
+                    <div style={{ marginBottom: isCompact ? '2px' : '5px' }}>
                         TRANSCRIPT ISSUE DATE: <Field editMode={editMode} value={header.issueDate} onChange={v => onHeaderChange('issueDate', v)} />
                     </div>
-                    <div style={{ marginBottom: '3px' }}>
+                    <div style={{ marginBottom: isCompact ? '1px' : '3px' }}>
                         TOTAL HOURS COMPLETED: <Field editMode={editMode} value={header.totalAccumulated} onChange={v => onHeaderChange('totalAccumulated', v)} style={{ fontWeight: 'bold' }} />
                     </div>
-                    <div style={{ marginBottom: '3px' }}>
+                    <div style={{ marginBottom: isCompact ? '1px' : '3px' }}>
                         GRADUATION DATE: <Field editMode={editMode} value={header.graduationDate || ''} onChange={v => onHeaderChange('graduationDate', v)} style={{ fontWeight: 'bold' }} />
                     </div>
                     <div>
