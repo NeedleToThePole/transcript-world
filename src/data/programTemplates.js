@@ -678,6 +678,96 @@ const NAIL_TECHNOLOGY = {
     ]
 };
 
+// ──────────────── Electrical ────────────────
+const ELECTRICAL = {
+    title: 'Electrical Transcript Card',
+    layout: 'stacked',
+    gridCols: 2,
+    hideRightFooter: true,
+    signatures: [
+        'Instructor',
+        'Authorized Personnel, Title'
+    ],
+    defaults: {
+        program: 'Electrical',
+        totalClassHours: '',
+        totalExternshipHours: '',
+        totalProgramHours: '672.5',
+        totalAccumulated: '',
+        ceus: '67.2',
+    },
+    columns: [
+        {
+            heading: 'SEMESTER I',
+            topics: [
+                { name: 'Core', hoursReq: 77.5 },
+                { name: 'Occupational Overview: The Electrical Industry', hoursReq: 2.5 },
+                { name: 'Safety for Electricians', hoursReq: 10 },
+                { name: 'Introduction to Electrical Circuits', hoursReq: 7.5 },
+                { name: 'Electrical Theory', hoursReq: 7.5 },
+                { name: 'Introduction to the National Electrical Code', hoursReq: 7.5 },
+                { name: 'Outlet, Device, Pull, and Junction Boxes', hoursReq: 10 },
+                { name: 'Hand Bending', hoursReq: 10 },
+                { name: 'Wireways, Raceways, and Fittings', hoursReq: 20 },
+                { name: 'Conductors and Cables', hoursReq: 10 },
+                { name: 'Basic Electrical Construction Documents', hoursReq: 7.5 },
+                { name: 'Residential Wiring', hoursReq: 15 },
+                { name: 'Electrical Test Equipment', hoursReq: 5 },
+            ],
+        },
+        {
+            heading: 'SEMESTER II',
+            topics: [
+                { name: 'Alternating Current', hoursReq: 17.4 },
+                { name: 'Motors: Theory and Application', hoursReq: 20 },
+                { name: 'Electric Lighting', hoursReq: 15 },
+                { name: 'Conduit Bending', hoursReq: 15 },
+                { name: 'Pull and Junction Boxes', hoursReq: 15.5 },
+                { name: 'Conductor Installations', hoursReq: 10 },
+                { name: 'Cable Tray', hoursReq: 7.5 },
+                { name: 'Conductor Terminations and Splices', hoursReq: 7.5 },
+                { name: 'Grounding and Bonding', hoursReq: 15 },
+                { name: 'Circuit Breakers and Fuses', hoursReq: 12.5 },
+                { name: 'Control Systems and Fundamental Concepts', hoursReq: 12.5 },
+            ],
+        },
+        {
+            heading: 'SEMESTER III',
+            topics: [
+                { name: 'Load Calculations – Branch and Feeder Circuits', hoursReq: 17.5 },
+                { name: 'Conductor Selection and Calculations', hoursReq: 15 },
+                { name: 'Practical Applications of Lighting', hoursReq: 12.5 },
+                { name: 'Hazardous Locations', hoursReq: 15 },
+                { name: 'Overcurrent Protection', hoursReq: 25 },
+                { name: 'Distribution Equipment', hoursReq: 12.5 },
+                { name: 'Transformers', hoursReq: 12.5 },
+                { name: 'Commercial Electrical Services', hoursReq: 10 },
+                { name: 'Motor Calculations', hoursReq: 12.5 },
+                { name: 'Voice, Data, and Video', hoursReq: 10 },
+                { name: 'Motor Controls', hoursReq: 12.5 },
+            ],
+        },
+        {
+            heading: 'SEMESTER IV',
+            topics: [
+                { name: 'Load Calculations – Feeders and Services', hoursReq: 20 },
+                { name: 'Health Care Facilities', hoursReq: 10 },
+                { name: 'Standby and Emergency Systems', hoursReq: 10 },
+                { name: 'Basic Electronic Theory', hoursReq: 10 },
+                { name: 'Fire Alarm Systems', hoursReq: 15 },
+                { name: 'Specialty Transformers', hoursReq: 10 },
+                { name: 'Advanced Controls', hoursReq: 20 },
+                { name: 'HVAC Controls', hoursReq: 15 },
+                { name: 'Heat Tracing and Freeze Protection', hoursReq: 10 },
+                { name: 'Motor Operation and Maintenance', hoursReq: 10 },
+                { name: 'Medium-Voltage Termination/Splices', hoursReq: 10 },
+                { name: 'Special Locations', hoursReq: 20 },
+                { name: 'Introduction to Leadership', hoursReq: 22.5 },
+            ],
+        },
+    ]
+};
+
 // ───────────────────────── Registry ─────────────────────────
 
 /** Look up the template by program name (case-insensitive substring match). */
@@ -692,6 +782,7 @@ export function getTemplateForProgram(programName) {
     if (p.includes('esthetic') || p.includes('esthetics')) return ESTHETICS;
     if (p.includes('massage')) return MEDICAL_MASSAGE;
     if (p.includes('nail')) return NAIL_TECHNOLOGY;
+    if (p.includes('electric') || p.includes('electrical')) return ELECTRICAL;
     if (p.includes('cna') && p.includes('pct')) return CNA_PCT;
     if (p.includes('nursing assistant') || p.includes('cna')) return NURSING_ASSISTANT;
     if (p.includes('patient care') || p.includes('pct')) return PATIENT_CARE_TECH;
@@ -708,6 +799,7 @@ export {
     ESTHETICS,
     MEDICAL_MASSAGE,
     NAIL_TECHNOLOGY,
+    ELECTRICAL,
     HAIR_BRAIDING,
     CNA_PCT,
     NURSING_ASSISTANT,
