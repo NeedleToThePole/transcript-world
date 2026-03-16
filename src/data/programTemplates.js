@@ -620,6 +620,64 @@ const MEDICAL_MASSAGE = {
     ]
 };
 
+// ──────────────── Nail Technology ────────────────
+const NAIL_TECHNOLOGY = {
+    title: 'Nail Technology Transcript Card',
+    layout: 'stacked',
+    gridCols: 2,
+    hideRightFooter: true,
+    signatures: [
+        'Instructor',
+        'Earlyn Edwards- Cosmetology Instructor Chairperson'
+    ],
+    defaults: {
+        program: 'Nail Technology',
+        totalClassHours: '',
+        totalExternshipHours: '',
+        totalProgramHours: '500',
+        totalAccumulated: '',
+        ceus: '',
+    },
+    columns: [
+        {
+            heading: 'SEMESTER I',
+            topics: [
+                { name: 'Infection Control', hoursReq: 50 },
+                { name: 'Anatomy & Physiology', hoursReq: 14 },
+                { name: 'Skin Structure, Disorders, & Diseases', hoursReq: 14 },
+                { name: 'Nail Structure, Disorders, & Diseases', hoursReq: 19 },
+                { name: 'Nail Product Chemistry', hoursReq: 15 },
+                { name: 'Manicuring', hoursReq: 50 },
+                { name: 'Pedicuring', hoursReq: 35 },
+                { name: 'Electrical Filing', hoursReq: 15 },
+                { name: 'Nail Tips & Forms', hoursReq: 28 },
+                { name: 'Nail Resin System', hoursReq: 20 },
+                { name: 'Monomer Liquid and Polymer Powder Nail Enhancements', hoursReq: 50 },
+                { name: 'Evaluation', hoursReq: 5 },
+                { name: 'Lab Practical', hoursReq: 5 },
+            ],
+        },
+        {
+            heading: 'SEMESTER II',
+            topics: [
+                { name: 'Gel Nail Enhancements', hoursReq: 25 },
+                { name: 'Nail Art', hoursReq: 20 },
+                { name: 'Chemistry & Chemical Safety', hoursReq: 5 },
+                { name: 'Electricity & Electrical Safety', hoursReq: 5 },
+                { name: 'History & Career Opportunities', hoursReq: 1 },
+                { name: 'Life Skills', hoursReq: 1 },
+                { name: 'Professional Image', hoursReq: 1 },
+                { name: 'Communicating for Success', hoursReq: 1 },
+                { name: 'The Healthy Professional', hoursReq: 1 },
+                { name: 'Career Planning', hoursReq: 10 },
+                { name: 'Evaluation', hoursReq: 5 },
+                { name: 'Lab Practical', hoursReq: 5 },
+                { name: 'Externship:', hoursReq: 100 },
+            ],
+        },
+    ]
+};
+
 // ───────────────────────── Registry ─────────────────────────
 
 /** Look up the template by program name (case-insensitive substring match). */
@@ -633,6 +691,7 @@ export function getTemplateForProgram(programName) {
     if (p.includes('cosmetology')) return COSMETOLOGY_FUNDAMENTALS;
     if (p.includes('esthetic') || p.includes('esthetics')) return ESTHETICS;
     if (p.includes('massage')) return MEDICAL_MASSAGE;
+    if (p.includes('nail')) return NAIL_TECHNOLOGY;
     if (p.includes('cna') && p.includes('pct')) return CNA_PCT;
     if (p.includes('nursing assistant') || p.includes('cna')) return NURSING_ASSISTANT;
     if (p.includes('patient care') || p.includes('pct')) return PATIENT_CARE_TECH;
@@ -648,6 +707,7 @@ export {
     COSMETOLOGY_FUNDAMENTALS,
     ESTHETICS,
     MEDICAL_MASSAGE,
+    NAIL_TECHNOLOGY,
     HAIR_BRAIDING,
     CNA_PCT,
     NURSING_ASSISTANT,

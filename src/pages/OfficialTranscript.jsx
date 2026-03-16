@@ -76,7 +76,8 @@ export default function OfficialTranscript({
     const isCompact = totalRows >= 35;
     const isHairBraiding = header.program && header.program.toLowerCase().includes('hair braiding');
     const isMedicalMassage = header.program && header.program.toLowerCase().includes('massage');
-    const isSpacious = isHairBraiding || isMedicalMassage;
+    const isNailTechnology = header.program && header.program.toLowerCase().includes('nail');
+    const isSpacious = isHairBraiding || isMedicalMassage || isNailTechnology;
 
     const tFS = isCompact ? '8px'     : isSpacious ? '11.5px' : '10px';       // table font size
     const tCP = isCompact ? '1px 2px' : isSpacious ? '3px 4px' : '1px 3px';   // table cell padding
