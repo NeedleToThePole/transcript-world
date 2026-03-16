@@ -74,8 +74,10 @@ export default function OfficialTranscript({
     // Dynamic sizing: count total rows (courses + term headers) to decide compression
     const totalRows = allTopics.length + terms.length;
     const isCompact = totalRows >= 35;
-    const tFS = isCompact ? '8px'     : '10px';       // table font size
-    const tCP = isCompact ? '1px 2px' : '1px 3px';    // table cell padding
+    const isHairBraiding = header.program && header.program.toLowerCase().includes('hair braiding');
+
+    const tFS = isCompact ? '8px'     : isHairBraiding ? '13px' : '10px';       // table font size
+    const tCP = isCompact ? '1px 2px' : isHairBraiding ? '5px 4px' : '1px 3px'; // table cell padding
     const headWidth = '90%';                          // Use 90% header width for everyone so it fits
     const hPT = '28.8%';                              // 32% relative crop (32% of 90% is 28.8%) for everyone
     const iBM = isCompact ? '2px 16px 6px' : '4px 16px 8px'; // info box margin
