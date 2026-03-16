@@ -74,20 +74,21 @@ export default function OfficialTranscript({
     // Dynamic sizing: count total rows (courses + term headers) to decide compression
     const totalRows = allTopics.length + terms.length;
     const isCompact = totalRows >= 35;
+    const isUltraCompact = totalRows >= 50; // Specifically for Electrical (52 rows)
     const isHairBraiding = header.program && header.program.toLowerCase().includes('hair braiding');
     const isMedicalMassage = header.program && header.program.toLowerCase().includes('massage');
     const isNailTechnology = header.program && header.program.toLowerCase().includes('nail');
     const isSpacious = isHairBraiding || isMedicalMassage;
 
-    const tFS = isCompact ? '8px' : isSpacious ? '11.5px' : isNailTechnology ? '10.5px' : '10px';       
-    const tCP = isCompact ? '1px 2px' : isSpacious ? '3px 4px' : isNailTechnology ? '1.5px 3px' : '1px 3px'; 
+    const tFS = isUltraCompact ? '7.5px' : isCompact ? '8px' : isSpacious ? '11.5px' : isNailTechnology ? '10.5px' : '10px';       
+    const tCP = isUltraCompact ? '0.5px 2px' : isCompact ? '1px 2px' : isSpacious ? '3px 4px' : isNailTechnology ? '1.5px 3px' : '1px 3px'; 
     const headWidth = '90%';                          // Use 90% header width for everyone so it fits
     const hPT = '28.8%';                              // 32% relative crop (32% of 90% is 28.8%) for everyone
-    const iBM = isCompact ? '2px 16px 6px' : '4px 16px 8px'; // info box margin
-    const fMB = isCompact ? '4px' : '8px';            // footer margin bottom
-    const sealSz = isCompact ? '81px' : '95px';       // seal size 
-    const ftrPad = isCompact ? '2px' : '4px';         // footer disclaimer padding
-    const ftrSigMT = isCompact ? '6px' : '8px';       // footer signature margin-top
+    const iBM = isUltraCompact ? '0px 16px 4px' : isCompact ? '2px 16px 6px' : '4px 16px 8px'; // info box margin
+    const fMB = isUltraCompact ? '2px' : isCompact ? '4px' : '8px';            // footer margin bottom
+    const sealSz = isUltraCompact ? '75px' : isCompact ? '81px' : '95px';       // seal size 
+    const ftrPad = isUltraCompact ? '1px' : isCompact ? '2px' : '4px';         // footer disclaimer padding
+    const ftrSigMT = isUltraCompact ? '4px' : isCompact ? '6px' : '8px';       // footer signature margin-top
 
     return (
         <div className="official-transcript-paper" style={{
