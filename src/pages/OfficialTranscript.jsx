@@ -74,15 +74,15 @@ export default function OfficialTranscript({
     // Dynamic sizing: count total rows (courses + term headers) to decide compression
     const totalRows = allTopics.length + terms.length;
     const isCompact = totalRows >= 35;
-    const tFS = isCompact ? '8px'     : '11px';       // table font size
+    const tFS = isCompact ? '8px'     : '10.5px';     // table font size
     const tCP = isCompact ? '1px 2px' : '2px 4px';    // table cell padding
     const headWidth = isCompact ? '90%' : '100%';     // scale the header overall
     const hPT = isCompact ? '28.8%' : '32%';          // 32% relative crop (32% of 90% is 28.8%) 
-    const iBM = isCompact ? '2px 16px 6px' : '8px 16px 16px'; // info box margin
-    const fMB = isCompact ? '4px' : '20px';           // footer margin bottom
-    const sealSz = isCompact ? '81px' : '112px';      // seal size (increased by 25%)
-    const ftrPad = isCompact ? '2px' : '8px';         // footer disclaimer padding
-    const ftrSigMT = isCompact ? '6px' : '16px';      // footer signature margin-top
+    const iBM = isCompact ? '2px 16px 6px' : '4px 16px 12px'; // info box margin
+    const fMB = isCompact ? '4px' : '10px';           // footer margin bottom
+    const sealSz = isCompact ? '81px' : '100px';      // seal size 
+    const ftrPad = isCompact ? '2px' : '4px';         // footer disclaimer padding
+    const ftrSigMT = isCompact ? '6px' : '10px';      // footer signature margin-top
 
     return (
         <div className="official-transcript-paper" style={{
