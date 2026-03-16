@@ -78,10 +78,12 @@ export default function OfficialTranscript({
     const isHairBraiding = header.program && header.program.toLowerCase().includes('hair braiding');
     const isMedicalMassage = header.program && header.program.toLowerCase().includes('massage');
     const isNailTechnology = header.program && header.program.toLowerCase().includes('nail');
+    const isHvac = header.program && (header.program.toLowerCase().includes('hvac') || header.program.toLowerCase().includes('heating'));
     const isSpacious = isHairBraiding || isMedicalMassage;
+    const isMidSize = isNailTechnology || isHvac;
 
-    const tFS = isUltraCompact ? '7.5px' : isCompact ? '8px' : isSpacious ? '11.5px' : isNailTechnology ? '10.5px' : '10px';       
-    const tCP = isUltraCompact ? '0.5px 2px' : isCompact ? '1px 2px' : isSpacious ? '3px 4px' : isNailTechnology ? '1.5px 3px' : '1px 3px'; 
+    const tFS = isUltraCompact ? '7.5px' : isCompact ? '8px' : isSpacious ? '11.5px' : isMidSize ? '10.5px' : '10px';       
+    const tCP = isUltraCompact ? '0.5px 2px' : isCompact ? '1px 2px' : isSpacious ? '3px 4px' : isMidSize ? '1.5px 3px' : '1px 3px'; 
     const headWidth = '90%';                          // Use 90% header width for everyone so it fits
     const hPT = '28.8%';                              // 32% relative crop (32% of 90% is 28.8%) for everyone
     const iBM = isUltraCompact ? '0px 16px 4px' : isCompact ? '2px 16px 6px' : '4px 16px 8px'; // info box margin
