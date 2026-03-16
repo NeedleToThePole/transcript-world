@@ -75,9 +75,11 @@ export default function OfficialTranscript({
     const totalRows = allTopics.length + terms.length;
     const isCompact = totalRows >= 35;
     const isHairBraiding = header.program && header.program.toLowerCase().includes('hair braiding');
+    const isMedicalMassage = header.program && header.program.toLowerCase().includes('massage');
+    const isSpacious = isHairBraiding || isMedicalMassage;
 
-    const tFS = isCompact ? '8px'     : isHairBraiding ? '11.5px' : '10px';       // table font size
-    const tCP = isCompact ? '1px 2px' : isHairBraiding ? '3px 4px' : '1px 3px'; // table cell padding
+    const tFS = isCompact ? '8px'     : isSpacious ? '11.5px' : '10px';       // table font size
+    const tCP = isCompact ? '1px 2px' : isSpacious ? '3px 4px' : '1px 3px';   // table cell padding
     const headWidth = '90%';                          // Use 90% header width for everyone so it fits
     const hPT = '28.8%';                              // 32% relative crop (32% of 90% is 28.8%) for everyone
     const iBM = isCompact ? '2px 16px 6px' : '4px 16px 8px'; // info box margin

@@ -574,6 +574,52 @@ const ESTHETICS = {
     ]
 };
 
+// ──────────────── Medical Massage ────────────────
+const MEDICAL_MASSAGE = {
+    title: 'Medical Massage Therapy Transcript Card',
+    layout: 'stacked',
+    gridCols: 2,
+    hideRightFooter: true,
+    signatures: [
+        'Instructor',
+        'Earlyn Edwards- Cosmetology Instructor Chairperson'
+    ],
+    defaults: {
+        program: 'Medical Massage Therapy',
+        totalClassHours: '',
+        totalExternshipHours: '',
+        totalProgramHours: '600',
+        totalAccumulated: '',
+        ceus: '',
+    },
+    columns: [
+        {
+            heading: 'SEMESTER I',
+            topics: [
+                { name: 'Anatomy', hoursReq: 50 },
+                { name: 'Physiology', hoursReq: 25 },
+                { name: 'Massage Theory Technique', hoursReq: 165 },
+                { name: 'Swedish Massage', hoursReq: 65 },
+                { name: 'Health & Hygiene', hoursReq: 20 },
+                { name: 'Evaluation', hoursReq: 5 },
+                { name: 'Lab Practical', hoursReq: 5 },
+            ],
+        },
+        {
+            heading: 'SEMESTER II',
+            topics: [
+                { name: 'Hydrotherapy', hoursReq: 20 },
+                { name: 'Kinesiology', hoursReq: 50 },
+                { name: 'Pathology', hoursReq: 40 },
+                { name: 'Business Practices and Professional Ethics', hoursReq: 45 },
+                { name: 'Evaluation', hoursReq: 5 },
+                { name: 'Lab Practical', hoursReq: 5 },
+                { name: 'Externship:', hoursReq: 100 },
+            ],
+        },
+    ]
+};
+
 // ───────────────────────── Registry ─────────────────────────
 
 /** Look up the template by program name (case-insensitive substring match). */
@@ -586,6 +632,7 @@ export function getTemplateForProgram(programName) {
     if (p.includes('cosmetology') && p.includes('foundation')) return COSMETOLOGY_FOUNDATION;
     if (p.includes('cosmetology')) return COSMETOLOGY_FUNDAMENTALS;
     if (p.includes('esthetic') || p.includes('esthetics')) return ESTHETICS;
+    if (p.includes('massage')) return MEDICAL_MASSAGE;
     if (p.includes('cna') && p.includes('pct')) return CNA_PCT;
     if (p.includes('nursing assistant') || p.includes('cna')) return NURSING_ASSISTANT;
     if (p.includes('patient care') || p.includes('pct')) return PATIENT_CARE_TECH;
@@ -600,6 +647,7 @@ export {
     COSMETOLOGY_FOUNDATION,
     COSMETOLOGY_FUNDAMENTALS,
     ESTHETICS,
+    MEDICAL_MASSAGE,
     HAIR_BRAIDING,
     CNA_PCT,
     NURSING_ASSISTANT,
