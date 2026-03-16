@@ -74,7 +74,7 @@ export default function OfficialTranscript({
     // Dynamic sizing: count total rows (courses + term headers) to decide compression
     const totalRows = allTopics.length + terms.length;
     const isCompact = totalRows >= 35;
-    const isUltraCompact = totalRows >= 45; // Specifically for Electrical (52) and Plumbing (46)
+    const isUltraCompact = totalRows >= 44; // Specifically for Electrical (52), Plumbing (46), Carpentry (44)
     const isHairBraiding = header.program && header.program.toLowerCase().includes('hair braiding');
     const isMedicalMassage = header.program && header.program.toLowerCase().includes('massage');
     const isNailTechnology = header.program && header.program.toLowerCase().includes('nail');

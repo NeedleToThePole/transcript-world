@@ -825,6 +825,88 @@ const HVAC = {
     ]
 };
 
+// ──────────────── Carpentry ────────────────
+const CARPENTRY = {
+    title: 'Carpentry Transcript Card',
+    layout: 'stacked',
+    gridCols: 2,
+    hideRightFooter: true,
+    signatures: [
+        'Instructor',
+        'Authorized Personnel, Title'
+    ],
+    defaults: {
+        program: 'Carpentry',
+        totalClassHours: '',
+        totalExternshipHours: '',
+        totalProgramHours: '710',
+        totalAccumulated: '',
+        ceus: '71.0',
+    },
+    columns: [
+        {
+            heading: 'SEMESTER I',
+            topics: [
+                { name: 'Core', hoursReq: 72.5 },
+                { name: 'Orientation to the Trade', hoursReq: 2.5 },
+                { name: 'Building Materials, Fasteners and Adhesives', hoursReq: 20 },
+                { name: 'Hand and Power Tools', hoursReq: '' },
+                { name: 'Introduction to Construction Drawings, Specifications, and Layout', hoursReq: 20 },
+                { name: 'Floor Systems', hoursReq: 25 },
+                { name: 'Wall Systems', hoursReq: 25 },
+                { name: 'Ceiling Joist and Rood Framing', hoursReq: '' },
+                { name: 'Introduction to Building Envelope', hoursReq: 12.5 },
+                { name: 'Basic Stair Layout', hoursReq: 12.5 },
+            ],
+        },
+        {
+            heading: 'SEMESTER II',
+            topics: [
+                { name: 'Commercial Drawings', hoursReq: '' },
+                { name: 'Cold-Formed Steel Framing', hoursReq: 15 },
+                { name: 'Exterior Finish and Trim', hoursReq: 35 },
+                { name: 'Thermal and Moisture Protection', hoursReq: 7.5 },
+                { name: 'Roofing Applications', hoursReq: 35 },
+                { name: 'Doors and Door Hardware', hoursReq: 25 },
+                { name: 'Drywall Installation', hoursReq: 25 },
+                { name: 'Drywall Finishing', hoursReq: '' },
+                { name: 'Suspended and Acoustical Ceilings', hoursReq: 15 },
+                { name: 'Window, Door, Floor, and Ceiling Trim', hoursReq: 12.5 },
+                { name: 'Cabinet Installation', hoursReq: '' },
+            ],
+        },
+        {
+            heading: 'SEMESTER III',
+            topics: [
+                { name: 'Properties of Concrete', hoursReq: 10 },
+                { name: 'Rigging Equipment', hoursReq: '' },
+                { name: 'Rigging Practices', hoursReq: '' },
+                { name: 'Trenching and Excavating', hoursReq: 15 },
+                { name: 'Reinforcing Concrete', hoursReq: 17.5 },
+                { name: 'Foundations and Slab-on-Grade', hoursReq: 10 },
+                { name: 'Vertical Formwork', hoursReq: 22.5 },
+                { name: 'Horizontal Formwork', hoursReq: 15 },
+                { name: 'Handling and Placing Concrete', hoursReq: 20 },
+                { name: 'Tilt-up Wall Systems', hoursReq: 17.5 },
+            ],
+        },
+        {
+            heading: 'SEMESTER IV',
+            topics: [
+                { name: 'Site Layout One: Differential Leveling', hoursReq: '' },
+                { name: 'Site Layout Two: Angular and Distance Measurement', hoursReq: '' },
+                { name: 'Advanced Roof Systems', hoursReq: '' },
+                { name: 'Advanced Wall Systems', hoursReq: '' },
+                { name: 'Advanced Stair Systems', hoursReq: '' },
+                { name: 'Introduction to Construction Equipment', hoursReq: '' },
+                { name: 'Introduction to Oxyfuel Cutting and Arc Welding', hoursReq: 17.5 },
+                { name: 'Site Preparation', hoursReq: 7.5 },
+                { name: 'Fundamentals of Crew Leadership', hoursReq: 22.5 },
+            ],
+        },
+    ]
+};
+
 // ──────────────── Plumbing ────────────────
 const PLUMBING = {
     title: 'Plumbing Transcript Card',
@@ -926,6 +1008,7 @@ export function getTemplateForProgram(programName) {
     if (p.includes('electric') || p.includes('electrical')) return ELECTRICAL;
     if (p.includes('hvac') || p.includes('heating')) return HVAC;
     if (p.includes('plumb')) return PLUMBING;
+    if (p.includes('carpent')) return CARPENTRY;
     if (p.includes('cna') && p.includes('pct')) return CNA_PCT;
     if (p.includes('nursing assistant') || p.includes('cna')) return NURSING_ASSISTANT;
     if (p.includes('patient care') || p.includes('pct')) return PATIENT_CARE_TECH;
@@ -945,6 +1028,7 @@ export {
     ELECTRICAL,
     HVAC,
     PLUMBING,
+    CARPENTRY,
     HAIR_BRAIDING,
     CNA_PCT,
     NURSING_ASSISTANT,
