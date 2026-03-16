@@ -768,6 +768,147 @@ const ELECTRICAL = {
     ]
 };
 
+// ──────────────── HVAC ────────────────
+const HVAC = {
+    title: 'Heating, Ventilation, Air Conditioning & Refrigeration (HVAC) Transcript Card',
+    layout: 'stacked',
+    gridCols: 2,
+    hideRightFooter: true,
+    signatures: [
+        'Instructor',
+        'Authorized Personnel, Title'
+    ],
+    defaults: {
+        program: 'HVAC',
+        totalClassHours: '',
+        totalExternshipHours: '',
+        totalProgramHours: '707.5',
+        totalAccumulated: '',
+        ceus: '70.7',
+    },
+    columns: [
+        {
+            heading: 'SEMESTER I',
+            topics: [
+                { name: 'Core', hoursReq: 77.5 },
+                { name: 'Introduction to HVAC/R', hoursReq: 5 },
+                { name: 'Trade Mathematics', hoursReq: 10 },
+                { name: 'Basic Electricity', hoursReq: 15 },
+                { name: 'Introduction to Heating', hoursReq: 15 },
+                { name: 'Introduction to Cooling', hoursReq: 30 },
+                { name: 'Air Distribution Systems', hoursReq: 15 },
+                { name: 'Basic Copper and Plastic Piping Practices', hoursReq: 12.5 },
+                { name: 'Soldering and Brazing', hoursReq: 10 },
+                { name: 'Basic Carbon Steel Piping Practices', hoursReq: 10 },
+            ],
+        },
+        {
+            heading: 'SEMESTER II',
+            topics: [
+                { name: 'Customer Relations', hoursReq: 5 },
+                { name: 'Basic Maintenance', hoursReq: 20 },
+                { name: 'Fasteners and Hardware', hoursReq: 10 },
+                { name: 'Alternating Current', hoursReq: 10 },
+                { name: 'Compressors', hoursReq: 12.5 },
+                { name: 'Metering Devices', hoursReq: 12.5 },
+                { name: 'Refrigerants and Oils', hoursReq: 15 },
+                { name: 'Leak Detection, Evaluation, Recovery, and Charging', hoursReq: 30 },
+                { name: 'Heat Pumps', hoursReq: 20 },
+                { name: 'Air Quality Equipment', hoursReq: 5 },
+                { name: 'Chimneys, Vents, and Flues', hoursReq: 5 },
+                { name: 'Sheet Metal Duct Systems', hoursReq: 10 },
+                { name: 'Fiberglass and Fabric Duct Systems', hoursReq: 7.5 },
+                { name: 'Commercial Airside Systems', hoursReq: 12.5 },
+                { name: 'Introduction to Hydronic System', hoursReq: 15 },
+            ],
+        },
+    ]
+};
+
+// ──────────────── Plumbing ────────────────
+const PLUMBING = {
+    title: 'Plumbing Transcript Card',
+    layout: 'stacked',
+    gridCols: 2,
+    hideRightFooter: true,
+    signatures: [
+        'Instructor',
+        'Authorized Personnel, Title'
+    ],
+    defaults: {
+        program: 'Plumbing',
+        totalClassHours: '',
+        totalExternshipHours: '',
+        totalProgramHours: '702.5',
+        totalAccumulated: '',
+        ceus: '70.2',
+    },
+    columns: [
+        {
+            heading: 'SEMESTER I',
+            topics: [
+                { name: 'Core', hoursReq: 72.5 },
+                { name: 'Introduction to the Plumbing Profession', hoursReq: 5 },
+                { name: 'Plumbing Safety', hoursReq: 22.5 },
+                { name: 'Tools of the Plumbing Trade', hoursReq: 10 },
+                { name: 'Introduction to Plumbing Math', hoursReq: 12.5 },
+                { name: 'Introduction to Plumbing Drawings', hoursReq: 17.5 },
+                { name: 'Plastic Pipe and Fittings', hoursReq: 12.5 },
+                { name: 'Copper Tube and Fittings', hoursReq: 12.5 },
+                { name: 'Cast Iron Pipe and Fittings', hoursReq: 12.5 },
+                { name: 'Steel Pipe and Fittings', hoursReq: 12.5 },
+                { name: 'Introduction to Plumbing Fixtures', hoursReq: 7.5 },
+                { name: 'Introduction to Drain, Waste, and Vent (DWV) Systems', hoursReq: 10 },
+                { name: 'Introduction to Water Distribution Systems', hoursReq: 10 },
+            ],
+        },
+        {
+            heading: 'SEMESTER II',
+            topics: [
+                { name: 'Plumbing Math II', hoursReq: 15 },
+                { name: 'Reading Commercial Drawings', hoursReq: 25 },
+                { name: 'Structural Penetrations, Insulating, and Firestopping', hoursReq: 15 },
+                { name: 'Installing Roof, Floor, and Area Drains', hoursReq: 5 },
+                { name: 'Installing and Testing Water Supply Piping', hoursReq: 20 },
+                { name: 'Types of Valves', hoursReq: 5 },
+                { name: 'Installing Fixtures and Valves', hoursReq: 20 },
+                { name: 'Installing Water Heaters', hoursReq: 10 },
+                { name: 'Basic Electricity', hoursReq: 10 },
+                { name: 'Fuel Gas and Fuel Oil Systems', hoursReq: 20 },
+            ],
+        },
+        {
+            heading: 'SEMESTER III',
+            topics: [
+                { name: 'Applied Math', hoursReq: 15 },
+                { name: 'Service Plumbing', hoursReq: 25 },
+                { name: 'Sizing and Protecting the Water Supply System', hoursReq: 30 },
+                { name: 'Potable Water Supply', hoursReq: 15 },
+                { name: 'Types of Venting', hoursReq: 20 },
+                { name: 'Sizing DWV and Storm Sytsmes', hoursReq: 20 },
+                { name: 'Sewage Pumps and Sump Pumps', hoursReq: 12.5 },
+                { name: 'Corrosive-Resistant Waste Piping', hoursReq: 7.5 },
+                { name: 'Compressed Air', hoursReq: 10 },
+            ],
+        },
+        {
+            heading: 'SEMESTER IV',
+            topics: [
+                { name: 'Business Principles for Plumbers', hoursReq: 15 },
+                { name: 'Introduction to Leadership', hoursReq: 22.5 },
+                { name: 'Water Pressure Booster and Recirculation Systems', hoursReq: 12.5 },
+                { name: 'Indirect and Special Waste', hoursReq: 12.5 },
+                { name: 'Hydronic and Solar Heating Systems', hoursReq: 17.5 },
+                { name: 'Codes', hoursReq: 12.5 },
+                { name: 'Private Water Supply Well Systems', hoursReq: 10 },
+                { name: 'Swimming Pools and Hot Tubs', hoursReq: 7.5 },
+                { name: 'Plumbing for Mobile Homes and Travel Trailers', hoursReq: 7.5 },
+                { name: 'Introduction to Medical Gas and Vacuum Systems', hoursReq: 15 },
+            ],
+        },
+    ]
+};
+
 // ───────────────────────── Registry ─────────────────────────
 
 /** Look up the template by program name (case-insensitive substring match). */
@@ -783,6 +924,8 @@ export function getTemplateForProgram(programName) {
     if (p.includes('massage')) return MEDICAL_MASSAGE;
     if (p.includes('nail')) return NAIL_TECHNOLOGY;
     if (p.includes('electric') || p.includes('electrical')) return ELECTRICAL;
+    if (p.includes('hvac') || p.includes('heating')) return HVAC;
+    if (p.includes('plumb')) return PLUMBING;
     if (p.includes('cna') && p.includes('pct')) return CNA_PCT;
     if (p.includes('nursing assistant') || p.includes('cna')) return NURSING_ASSISTANT;
     if (p.includes('patient care') || p.includes('pct')) return PATIENT_CARE_TECH;
@@ -800,6 +943,8 @@ export {
     MEDICAL_MASSAGE,
     NAIL_TECHNOLOGY,
     ELECTRICAL,
+    HVAC,
+    PLUMBING,
     HAIR_BRAIDING,
     CNA_PCT,
     NURSING_ASSISTANT,
