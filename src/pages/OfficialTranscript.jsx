@@ -225,11 +225,8 @@ export default function OfficialTranscript({
                 alignItems: 'flex-end',
                 fontSize: '10px',
             }}>
-                {/* Left — Disclaimer + Signature */}
+                {/* Left — Signature */}
                 <div style={{ width: '32%', border: border, padding: ftrPad, fontSize: isCompact ? '7.5px' : '9px' }}>
-                    <p style={{ fontStyle: 'italic', lineHeight: '1.3', margin: isCompact ? '0 0 4px' : '0 0 12px' }}>
-                        This document is not an official transcript unless stamped with the school seal and has an authorized signature.
-                    </p>
                     <p style={{ textAlign: 'center', margin: '0 0 2px', fontWeight: 'bold', fontSize: isCompact ? '8px' : '10px' }}>Principal</p>
                     <div style={{ borderTop: '1px solid black', marginTop: ftrSigMT, paddingTop: '2px', textAlign: 'center' }}>
                         Authorized Personnel, Title
