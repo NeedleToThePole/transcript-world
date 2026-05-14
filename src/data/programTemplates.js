@@ -991,6 +991,55 @@ const PLUMBING = {
     ]
 };
 
+// ──────────────── Phlebotomy ────────────────
+const PHLEBOTOMY = {
+    title: 'ALLIED HEALTH & SCIENCES - Transcript',
+    layout: '2col-allied',
+    defaults: {
+        program: 'Phlebotomy Technician',
+        totalClassHours: '230',
+        totalExternshipHours: '90',
+        totalProgramHours: '320',
+        totalAccumulated: '320',
+        ceus: '33',
+    },
+    columns: [
+        {
+            heading: null,
+            topics: [
+                { name: 'Phlebotomy & Healthcare Setting', hoursReq: 7.5 },
+                { name: 'Quality Assurance and Legal Issues in Healthcare', hoursReq: 7.5 },
+                { name: 'Infection Control, Safety, First Aid and Personal Wellness', hoursReq: 12.5 },
+                { name: 'Medical Terminology/Lab Abbreviations', hoursReq: 12.5 },
+                { name: 'Human Anatomy and Physiology (Overview)', hoursReq: 7.5 },
+                { name: 'The Circulatory System (& BP Practical)', hoursReq: 17.5 },
+                { name: 'Blood Collection Equipment', hoursReq: 10 },
+                { name: 'Venipuncture Procedures / Lab Praticum', hoursReq: 20 },
+                { name: 'Lab Practicum', hoursReq: 17.5 },
+                { name: 'Evaluation / Mid-Term Exam', hoursReq: 7.5 },
+            ],
+        },
+        {
+            heading: null,
+            topics: [
+                { name: 'Preexamination / Preanalytical Considerations', hoursReq: 10 },
+                { name: 'Capillary Puncture Equipment/Principles & Procedures', hoursReq: 10 },
+                { name: 'Lab Practicum', hoursReq: 15 },
+                { name: 'Career Development / Externship Prep', hoursReq: 5 },
+                { name: 'Special Collections & Point-of-Care Testing', hoursReq: 7.5 },
+                { name: 'Lab Practicum', hoursReq: 12.5 },
+                { name: 'Special Handling and Processing', hoursReq: 10 },
+                { name: 'Urine & Other Nonblood Specimens and tests', hoursReq: 10 },
+                { name: 'Lab Practicum', hoursReq: 17.5 },
+                { name: 'Arterial Puncture Procedures', hoursReq: 5 },
+                { name: 'Evaluation / Final Exam', hoursReq: 7.5 },
+                { name: 'Externship Hours', hoursReq: 90 },
+                { name: 'Total Program Hours', hoursReq: 320 },
+            ],
+        },
+    ],
+};
+
 // ───────────────────────── Registry ─────────────────────────
 
 /** Look up the template by program name (case-insensitive substring match). */
@@ -1012,6 +1061,7 @@ export function getTemplateForProgram(programName) {
     if (p.includes('cna') && p.includes('pct')) return CNA_PCT;
     if (p.includes('nursing assistant') || p.includes('cna')) return NURSING_ASSISTANT;
     if (p.includes('patient care') || p.includes('pct')) return PATIENT_CARE_TECH;
+    if (p.includes('phlebotomy') || p.includes('phleb')) return PHLEBOTOMY;
     // Default to Allied Health for any other program
     return ALLIED_HEALTH;
 }
@@ -1033,4 +1083,5 @@ export {
     CNA_PCT,
     NURSING_ASSISTANT,
     PATIENT_CARE_TECH,
+    PHLEBOTOMY,
 };

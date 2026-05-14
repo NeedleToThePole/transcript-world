@@ -12,6 +12,7 @@
     "start": "node server/index.js"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.4",
     "vite": "^5.1.4"
   },
   "dependencies": {
