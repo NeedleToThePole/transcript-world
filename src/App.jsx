@@ -23,7 +23,7 @@ function AdminLayout({ children, onLogout }) {
         <div className="app-container" style={{ display: 'flex', minHeight: '100vh' }}>
             <Sidebar onLogout={onLogout} />
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <Header />
+                <Header roleName="Administration" />
                 <main style={{ padding: '2rem', flex: 1 }}>
                     {children}
                 </main>
@@ -34,12 +34,12 @@ function AdminLayout({ children, onLogout }) {
 }
 
 // Teacher layout — teal accent, teacher sidebar
-function TeacherLayout({ children, onLogout }) {
+function TeacherLayout({ children, teacherAuth, onLogout }) {
     return (
         <div className="app-container" style={{ display: 'flex', minHeight: '100vh' }}>
             <TeacherSidebar onLogout={onLogout} />
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <Header />
+                <Header roleName={teacherAuth} />
                 <main style={{ padding: '2rem', flex: 1 }}>
                     {children}
                 </main>
@@ -113,7 +113,7 @@ function AppRoutes() {
 
             <Route path="/teacher/*" element={
                 teacherAuth ? (
-                    <TeacherLayout onLogout={() => setTeacherAuth(null)}>
+                    <TeacherLayout teacherAuth={teacherAuth} onLogout={() => setTeacherAuth(null)}>
                         <Routes>
                             <Route path="dashboard" element={<TeacherDashboard teacherProgram={teacherAuth} />} />
                             <Route path="students" element={<TeacherStudents teacherProgram={teacherAuth} />} />

@@ -49,19 +49,35 @@ export default function TeacherSidebar({ onLogout }) {
                 </NavLink>
             </nav>
 
-            <button
-                onClick={onLogout}
-                style={{
-                    display: 'flex', alignItems: 'center', gap: '0.75rem',
-                    padding: '0.75rem 1rem', borderRadius: 'var(--border-radius)',
-                    color: '#dc2626', backgroundColor: 'transparent',
-                    border: '1px solid #fecaca', cursor: 'pointer',
-                    fontWeight: '500', fontSize: '0.9rem',
-                    transition: 'all 0.2s',
-                }}
-            >
-                <LogOut size={18} /> Sign Out
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <a
+                    href="#/"
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: '0.75rem',
+                        padding: '0.75rem 1rem', borderRadius: 'var(--border-radius)',
+                        color: '#475569', backgroundColor: '#f1f5f9',
+                        textDecoration: 'none', cursor: 'pointer',
+                        fontWeight: '500', fontSize: '0.9rem',
+                        transition: 'all 0.2s',
+                    }}
+                >
+                    <LayoutDashboard size={18} /> Main Website
+                </a>
+                
+                <button
+                    onClick={onLogout}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: '0.75rem',
+                        padding: '0.75rem 1rem', borderRadius: 'var(--border-radius)',
+                        color: '#dc2626', backgroundColor: 'transparent',
+                        border: '1px solid #fecaca', cursor: 'pointer',
+                        fontWeight: '500', fontSize: '0.9rem',
+                        transition: 'all 0.2s',
+                    }}
+                >
+                    <LogOut size={18} /> Change Portal / Logout
+                </button>
+            </div>
         </aside>
     );
 }

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Bell, User } from 'lucide-react';
 
-export default function Header() {
+export default function Header({ roleName }) {
+    const displayName = roleName || 'Administration';
+    const initials = displayName.substring(0, 2).toUpperCase();
+
     return (
         <header className="no-print" style={{
             display: 'flex',
@@ -30,11 +33,12 @@ export default function Header() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '0.875rem'
+                        fontSize: '0.875rem',
+                        fontWeight: 'bold'
                     }}>
-                        JD
+                        {initials}
                     </div>
-                    <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>Jane Doe</span>
+                    <span style={{ fontSize: '0.875rem', fontWeight: '600' }}>{displayName}</span>
                 </div>
             </div>
         </header>
