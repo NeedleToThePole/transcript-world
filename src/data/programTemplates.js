@@ -1040,6 +1040,59 @@ const PHLEBOTOMY = {
     ],
 };
 
+// ──────────────── Computer Applications ────────────────
+const COMPUTER_APPLICATIONS = {
+    title: 'Computer Application Transcript Card',
+    layout: 'stacked',
+    gridCols: 2,
+    hideRightFooter: true,
+    signatures: [
+        'Instructor',
+        'Earlyn Edwards- Cosmetology Instructor Chairperson'
+    ],
+    defaults: {
+        program: 'Computer Applications',
+        totalClassHours: '',
+        totalExternshipHours: '',
+        totalProgramHours: '330',
+        totalAccumulated: '',
+        ceus: '',
+    },
+    columns: [
+        {
+            heading: 'SEMESTER I',
+            topics: [
+                { name: 'Introduction to Computing & Operating Systems', hoursReq: 15 },
+                { name: 'Internet Safety & Digital Citizenship', hoursReq: 15 },
+                { name: 'File Management & Cloud Storage', hoursReq: 15 },
+                { name: 'Foundations of Word Processing (Text Basics)', hoursReq: 20 },
+                { name: 'Advanced Formatting, Styles, & Page Layout', hoursReq: 20 },
+                { name: 'Working with Tables, Images, & Graphics', hoursReq: 20 },
+                { name: 'Document Review & Collaboration Tools', hoursReq: 15 },
+                { name: 'Mail Merge & Document Automation', hoursReq: 15 },
+                { name: 'Lab Practical: Integrated Word Processing', hoursReq: 20 },
+                { name: 'Final Evaluation', hoursReq: 10 },
+            ],
+        },
+        {
+            heading: 'SEMESTER II',
+            topics: [
+                { name: 'Spreadsheet Fundamentals & Environment', hoursReq: 15 },
+                { name: 'Data Entry, Cell Basics, & Formatting', hoursReq: 15 },
+                { name: 'Working with Multiple Worksheets & Workbooks', hoursReq: 15 },
+                { name: 'Introductory Formulas & Mathematical Operators', hoursReq: 20 },
+                { name: 'Relative & Absolute Cell Referencing', hoursReq: 15 },
+                { name: 'Advanced Logical & Statistical Functions', hoursReq: 20 },
+                { name: 'Data Visualization (Charts & Sparklines)', hoursReq: 15 },
+                { name: 'Managing Large Data Sets (Sorting & Filtering)', hoursReq: 15 },
+                { name: 'Pivot Tables & Advanced Data Analysis', hoursReq: 15 },
+                { name: 'Collaboration & Spreadsheet Security', hoursReq: 10 },
+                { name: 'Final Capstone: Data Management Project', hoursReq: 10 },
+            ],
+        },
+    ],
+};
+
 // ───────────────────────── Registry ─────────────────────────
 
 /** Look up the template by program name (case-insensitive substring match). */
@@ -1062,6 +1115,7 @@ export function getTemplateForProgram(programName) {
     if (p.includes('nursing assistant') || p.includes('cna')) return NURSING_ASSISTANT;
     if (p.includes('patient care') || p.includes('pct')) return PATIENT_CARE_TECH;
     if (p.includes('phlebotomy') || p.includes('phleb')) return PHLEBOTOMY;
+    if (p.includes('computer')) return COMPUTER_APPLICATIONS;
     // Default to Allied Health for any other program
     return ALLIED_HEALTH;
 }
@@ -1084,4 +1138,5 @@ export {
     NURSING_ASSISTANT,
     PATIENT_CARE_TECH,
     PHLEBOTOMY,
+    COMPUTER_APPLICATIONS,
 };
