@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRequestById, getStudentByInternalId, getTranscriptByStudentId, saveTranscript } from '../lib/data';
+import { getRequestById, getStudentByInternalId, getTranscriptByStudentId, saveTranscript, getTranscriptById, updateRequest } from '../lib/data';
 import { getTemplateForProgram } from '../data/programTemplates';
 import { Printer, Save, Pencil, Eye, Mail, Check } from 'lucide-react';
 
@@ -195,7 +195,16 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                     // Check if there's a saved transcript linked to this student
                     let existing = null;
                     if (req.transcriptId) {
-                        existing = await getTranscriptByStudentId(req.transcriptId);
+                        existing = await getTranscriptById(req.transcriptId);
+                    }
+                    if (!existing && req.enrolledStudentId) {
+                        existing = await getTranscriptByStudentId(req.enrolledStudentId);
+                    }
+                    if (!existing && req.studentId) {
+                        existing = await getTranscriptByStudentId(req.studentId);
+                    }
+                    if (!existing && req.id) {
+                        existing = await getTranscriptByStudentId(req.id);
                     }
 
                     setHeader(h => ({
@@ -286,14 +295,14 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
 
     const handleSave = async (forceComplete = false) => {
         setSaveStatus('saving');
-        const studentId = student?.id || request?.studentId || id;
+        const studentId = student?.id || request?.enrolledStudentId || request?.studentId || id;
         const program = student?.program || request?.program || header.program;
 
         // Auto-detect: complete only if all hours are filled
         const allFilled = colHours.every(col => col.every(h => h !== '' && h !== undefined));
         const status = forceComplete ? 'complete' : (allFilled ? 'complete' : 'in_progress');
 
-        await saveTranscript({
+        const savedT = await saveTranscript({
             studentId,
             program,
             header,
@@ -302,6 +311,16 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
             status,
             lastModified: new Date().toISOString(),
         });
+
+        if (request) {
+            const updateFields = { transcriptId: savedT.id };
+            if (status === 'complete' && (request.status === 'Pending' || request.status?.includes('Awaiting Grades'))) {
+                updateFields.status = 'Ready for Review';
+            }
+            await updateRequest(request.id, updateFields);
+            setRequest(prev => ({ ...prev, ...updateFields }));
+        }
+
         setSaveStatus(forceComplete ? 'force_saved' : 'saved');
         setTranscriptStatus(status);
         setTimeout(() => setSaveStatus(''), 2500);

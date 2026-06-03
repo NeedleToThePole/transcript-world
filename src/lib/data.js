@@ -45,6 +45,15 @@ export async function updateRequestStatus(id, status) {
     return res.json();
 }
 
+export async function updateRequest(id, fields) {
+    const res = await fetch(`${API_URL}/requests/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields),
+    });
+    return res.json();
+}
+
 export async function getTeacherCodes() {
     const res = await fetch(`${API_URL}/teacherCodes`);
     const data = await res.json();
@@ -106,6 +115,12 @@ export async function getTranscriptByStudentId(studentId) {
     const res = await fetch(`${API_URL}/transcripts?studentId=${encodeURIComponent(studentId)}`);
     const data = await res.json();
     return data[0] || null;
+}
+
+export async function getTranscriptById(id) {
+    const res = await fetch(`${API_URL}/transcripts/${id}`);
+    if (!res.ok) return null;
+    return res.json();
 }
 
 export async function saveTranscript(transcript) {

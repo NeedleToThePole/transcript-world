@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRequestById, getTranscriptByStudentId, saveTranscript } from '../lib/data';
+import { getRequestById, getTranscriptByStudentId, saveTranscript, getTranscriptById, updateRequest } from '../lib/data';
 import { getTemplateForProgram } from '../data/programTemplates';
 import { Printer, ArrowLeft, Save, Check } from 'lucide-react';
 import OfficialTranscript from './OfficialTranscript';
@@ -35,7 +35,16 @@ export default function OfficialTranscriptPage() {
 
                 let existing = null;
                 if (req.transcriptId) {
-                    existing = await getTranscriptByStudentId(req.transcriptId);
+                    existing = await getTranscriptById(req.transcriptId);
+                }
+                if (!existing && req.enrolledStudentId) {
+                    existing = await getTranscriptByStudentId(req.enrolledStudentId);
+                }
+                if (!existing && req.studentId) {
+                    existing = await getTranscriptByStudentId(req.studentId);
+                }
+                if (!existing && req.id) {
+                    existing = await getTranscriptByStudentId(req.id);
                 }
 
                 setHeader(h => ({
@@ -66,8 +75,9 @@ export default function OfficialTranscriptPage() {
 
     const handleSave = async () => {
         setSaveStatus('saving');
-        await saveTranscript({
-            studentId: request.studentId || request.studentInfo?.id || request.id,
+        const studentId = request.enrolledStudentId || request.studentId || request.studentInfo?.id || request.id;
+        const savedT = await saveTranscript({
+            studentId,
             program: request.program,
             header,
             colHours,
@@ -75,6 +85,12 @@ export default function OfficialTranscriptPage() {
             status: 'complete',
             lastModified: new Date().toISOString(),
         });
+
+        if (request) {
+            await updateRequest(request.id, { transcriptId: savedT.id });
+            setRequest(prev => ({ ...prev, transcriptId: savedT.id }));
+        }
+
         setSaveStatus('saved');
         setTimeout(() => setSaveStatus(''), 2500);
     };
