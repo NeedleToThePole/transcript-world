@@ -65,8 +65,18 @@
         margin: 0 0 2px !important;
     }
 
-    .official-transcript-paper input {
+    .official-transcript-paper input,
+    .official-transcript-paper select,
+    .official-transcript-paper textarea {
         display: none !important;
+    }
+
+    .official-transcript-paper .print-text-only {
+        display: inline !important;
+    }
+
+    .official-transcript-paper div.print-text-only {
+        display: block !important;
     }
 }
 

@@ -13,16 +13,21 @@ const cellPad = '2px 4px';
 function Field({ value, onChange, style = {}, editMode }) {
     if (editMode) {
         return (
-            <input
-                style={{
-                    border: 'none', borderBottom: '1px solid #999',
-                    background: 'transparent', fontFamily: 'inherit',
-                    fontSize: 'inherit', padding: '0 2px', minWidth: '40px',
-                    boxShadow: 'none', ...style,
-                }}
-                value={value}
-                onChange={e => onChange(e.target.value)}
-            />
+            <span style={{ position: 'relative', display: 'inline-block', minWidth: '40px', ...style }}>
+                <input
+                    style={{
+                        border: 'none', borderBottom: '1px solid #999',
+                        background: 'transparent', fontFamily: 'inherit',
+                        fontSize: 'inherit', padding: '0 2px', width: '100%',
+                        boxShadow: 'none', ...style,
+                    }}
+                    value={value}
+                    onChange={e => onChange(e.target.value)}
+                />
+                <span className="print-text-only" style={{ display: 'none', fontWeight: 'bold', textDecoration: 'underline', ...style }}>
+                    {value || '________'}
+                </span>
+            </span>
         );
     }
     return <span style={{ fontWeight: 'bold', textDecoration: 'underline', ...style }}>{value || '________'}</span>;
@@ -193,17 +198,22 @@ export default function OfficialTranscript({
                                             </td>
                                             <td style={{ border: border, padding: tCP, textAlign: 'center' }}>
                                                 {editMode ? (
-                                                    <input
-                                                        style={{
-                                                            border: 'none', borderBottom: '1px solid #ccc',
-                                                            background: 'transparent', width: '100%',
-                                                            textAlign: 'center', fontFamily: 'inherit',
-                                                            fontSize: 'inherit', boxShadow: 'none',
-                                                        }}
-                                                        value={allGrades[globalIdx] || ''}
-                                                        onChange={e => onGradeChange(globalIdx, e.target.value)}
-                                                        placeholder="—"
-                                                    />
+                                                    <span style={{ position: 'relative', display: 'block', width: '100%' }}>
+                                                        <input
+                                                            style={{
+                                                                border: 'none', borderBottom: '1px solid #ccc',
+                                                                background: 'transparent', width: '100%',
+                                                                textAlign: 'center', fontFamily: 'inherit',
+                                                                fontSize: 'inherit', boxShadow: 'none',
+                                                            }}
+                                                            value={allGrades[globalIdx] || ''}
+                                                            onChange={e => onGradeChange(globalIdx, e.target.value)}
+                                                            placeholder="—"
+                                                        />
+                                                        <span className="print-text-only" style={{ display: 'none' }}>
+                                                            {allGrades[globalIdx] || ''}
+                                                        </span>
+                                                    </span>
                                                 ) : (
                                                     <span>{allGrades[globalIdx] || ''}</span>
                                                 )}
@@ -239,21 +249,31 @@ export default function OfficialTranscript({
                     <div style={{ position: 'relative', marginTop: '1.4rem' }}>
                         <div style={{ position: 'absolute', bottom: '2px', width: '100%', textAlign: 'center' }}>
                             {editMode ? (
-                                <input
-                                    style={{
-                                        width: '100%',
-                                        border: 'none',
-                                        background: 'transparent',
-                                        outline: 'none',
+                                <>
+                                    <input
+                                        style={{
+                                            width: '100%',
+                                            border: 'none',
+                                            background: 'transparent',
+                                            outline: 'none',
+                                            fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
+                                            fontSize: '1.35rem',
+                                            padding: '0',
+                                            textAlign: 'center',
+                                            boxShadow: 'none',
+                                        }}
+                                        value={header.principalSignature !== undefined ? header.principalSignature : 'Dr. Mario Francis'}
+                                        onChange={e => onHeaderChange('principalSignature', e.target.value)}
+                                    />
+                                    <span className="print-text-only" style={{
+                                        display: 'none',
                                         fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
                                         fontSize: '1.35rem',
-                                        padding: '0',
                                         textAlign: 'center',
-                                        boxShadow: 'none',
-                                    }}
-                                    value={header.principalSignature !== undefined ? header.principalSignature : 'Dr. Mario Francis'}
-                                    onChange={e => onHeaderChange('principalSignature', e.target.value)}
-                                />
+                                    }}>
+                                        {header.principalSignature !== undefined ? header.principalSignature : 'Dr. Mario Francis'}
+                                    </span>
+                                </>
                             ) : (
                                 <div style={{
                                     fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',

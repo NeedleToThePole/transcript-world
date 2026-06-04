@@ -2,8 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getRequestById, getTranscriptByStudentId, saveTranscript, getTranscriptById, updateRequest } from '../lib/data';
 import { getTemplateForProgram } from '../data/programTemplates';
-import { Printer, ArrowLeft, Save, Check } from 'lucide-react';
+import { Printer, ArrowLeft, Save, Check, Download } from 'lucide-react';
 import OfficialTranscript from './OfficialTranscript';
+
+const loadHtml2Pdf = () => {
+    return new Promise((resolve, reject) => {
+        if (window.html2pdf) {
+            resolve(window.html2pdf);
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        script.onload = () => resolve(window.html2pdf);
+        script.onerror = (err) => reject(err);
+        document.body.appendChild(script);
+    });
+};
 
 export default function OfficialTranscriptPage() {
     const { id } = useParams();
@@ -24,6 +38,43 @@ export default function OfficialTranscriptPage() {
     const [grades, setGrades] = useState([]);
 
     const [saveStatus, setSaveStatus] = useState('');
+    const [downloading, setDownloading] = useState(false);
+
+    const handlePrint = () => {
+        const prevEdit = editMode;
+        setEditMode(false);
+        setTimeout(() => {
+            window.print();
+            setEditMode(prevEdit);
+        }, 100);
+    };
+
+    const handleDownload = async () => {
+        setDownloading(true);
+        const prevEdit = editMode;
+        setEditMode(false);
+
+        setTimeout(async () => {
+            try {
+                const html2pdf = await loadHtml2Pdf();
+                const element = document.querySelector('.official-transcript-paper');
+                const opt = {
+                    margin: 0.15,
+                    filename: `${header.studentName || 'Student'}_Official_Transcript.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, logging: false },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+                await html2pdf().set(opt).from(element).save();
+            } catch (err) {
+                console.error(err);
+                alert('Could not download PDF. Please try printing as PDF instead.');
+            } finally {
+                setEditMode(prevEdit);
+                setDownloading(false);
+            }
+        }, 150);
+    };
 
     useEffect(() => {
         getRequestById(id).then(async req => {
@@ -114,9 +165,13 @@ export default function OfficialTranscriptPage() {
                         style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         {editMode ? 'Preview' : 'Edit'}
                     </button>
-                    <button className="btn btn-primary" onClick={() => window.print()}
+                    <button className="btn btn-primary" onClick={handlePrint}
                         style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <Printer size={16} /> Print Official
+                    </button>
+                    <button className="btn btn-primary" onClick={handleDownload} disabled={downloading}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', backgroundColor: '#0f766e', borderColor: '#0f766e' }}>
+                        <Download size={16} /> {downloading ? 'Downloading...' : 'Download PDF'}
                     </button>
                 </div>
             </div>
