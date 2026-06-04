@@ -234,9 +234,41 @@ export default function OfficialTranscript({
                 fontSize: '10px',
             }}>
                 {/* Left — Signature */}
-                <div style={{ width: '32%', border: border, padding: ftrPad, fontSize: isCompact ? '7.5px' : '9px' }}>
+                <div style={{ width: '32%', border: border, padding: ftrPad, fontSize: isCompact ? '7.5px' : '9px', display: 'flex', flexDirection: 'column' }}>
                     <p style={{ textAlign: 'center', margin: '0 0 2px', fontWeight: 'bold', fontSize: isCompact ? '8px' : '10px' }}>Principal</p>
-                    <div style={{ borderTop: '1px solid black', marginTop: ftrSigMT, paddingTop: '2px', textAlign: 'center' }}>
+                    <div style={{ position: 'relative', marginTop: '1.4rem' }}>
+                        <div style={{ position: 'absolute', bottom: '2px', width: '100%', textAlign: 'center' }}>
+                            {editMode ? (
+                                <input
+                                    style={{
+                                        width: '100%',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        outline: 'none',
+                                        fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
+                                        fontSize: '1.35rem',
+                                        padding: '0',
+                                        textAlign: 'center',
+                                        boxShadow: 'none',
+                                    }}
+                                    value={header.principalSignature !== undefined ? header.principalSignature : 'Dr. Mario Francis'}
+                                    onChange={e => onHeaderChange('principalSignature', e.target.value)}
+                                />
+                            ) : (
+                                <div style={{
+                                    fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
+                                    fontSize: '1.35rem',
+                                    textAlign: 'center',
+                                    height: '1.35rem',
+                                    lineHeight: '1',
+                                }}>
+                                    {header.principalSignature !== undefined ? header.principalSignature : 'Dr. Mario Francis'}
+                                </div>
+                            )}
+                        </div>
+                        <div style={{ borderTop: '1px solid black' }}></div>
+                    </div>
+                    <div style={{ paddingTop: '2px', textAlign: 'center' }}>
                         Authorized Personnel, Title
                     </div>
                 </div>

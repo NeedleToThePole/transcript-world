@@ -55,6 +55,7 @@ export default function OfficialTranscriptPage() {
                     totalAccumulated: existing?.header?.totalAccumulated || tmpl.defaults.totalAccumulated || '',
                     ceus: existing?.header?.ceus || tmpl.defaults.ceus || '',
                     ...(existing?.header || {}),
+                    principalSignature: existing?.header?.principalSignature || 'Dr. Mario Francis',
                 }));
 
                 if (existing?.colHours) setColHours(existing.colHours);
