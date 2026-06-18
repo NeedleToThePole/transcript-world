@@ -1100,7 +1100,7 @@ export function getTemplateForProgram(programName) {
     if (!programName) return ALLIED_HEALTH;
     const p = programName.toLowerCase();
     if (p.includes('barber')) return BARBERING;
-    if (p.includes('admin assist') || p.includes('billing')) return MED_ADMIN_ASSISTANT;
+    if (p.includes('admin assist') || p.includes('billing') || p.includes('administrative') || p.includes('maa')) return MED_ADMIN_ASSISTANT;
     if (p.includes('hair braid')) return HAIR_BRAIDING;
     if (p.includes('cosmetology') && p.includes('foundation')) return COSMETOLOGY_FOUNDATION;
     if (p.includes('cosmetology')) return COSMETOLOGY_FUNDAMENTALS;
