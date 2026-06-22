@@ -79,7 +79,8 @@ export default function OfficialTranscript({
     // Dynamic sizing: count total rows (courses + term headers) to decide compression
     const totalRows = allTopics.length + terms.length;
     const isCompact = totalRows >= 35;
-    const isUltraCompact = totalRows >= 44; // Specifically for Electrical (52), Plumbing (46), Carpentry (44)
+    const isSuperUltraCompact = totalRows >= 50;
+    const isUltraCompact = totalRows >= 44 && totalRows < 50;
     const isHairBraiding = header.program && header.program.toLowerCase().includes('hair braiding');
     const isMedicalMassage = header.program && header.program.toLowerCase().includes('massage');
     const isNailTechnology = header.program && header.program.toLowerCase().includes('nail');
@@ -87,15 +88,15 @@ export default function OfficialTranscript({
     const isSpacious = isHairBraiding || isMedicalMassage;
     const isMidSize = isNailTechnology || isHvac;
 
-    const tFS = isUltraCompact ? '7.5px' : isCompact ? '8px' : isSpacious ? '11.5px' : isMidSize ? '10.5px' : '10px';       
-    const tCP = isUltraCompact ? '0.5px 2px' : isCompact ? '1px 2px' : isSpacious ? '3px 4px' : isMidSize ? '1.5px 3px' : '1px 3px'; 
-    const headWidth = '90%';                          // Use 90% header width for everyone so it fits
-    const hPT = '28.8%';                              // 32% relative crop (32% of 90% is 28.8%) for everyone
-    const iBM = isUltraCompact ? '0px 16px 4px' : isCompact ? '2px 16px 6px' : '4px 16px 8px'; // info box margin
-    const fMB = isUltraCompact ? '2px' : isCompact ? '4px' : '8px';            // footer margin bottom
-    const sealSz = isUltraCompact ? '75px' : isCompact ? '81px' : '95px';       // seal size 
-    const ftrPad = isUltraCompact ? '1px' : isCompact ? '2px' : '4px';         // footer disclaimer padding
-    const ftrSigMT = isUltraCompact ? '4px' : isCompact ? '6px' : '8px';       // footer signature margin-top
+    const tFS = isSuperUltraCompact ? '6.8px' : isUltraCompact ? '7.5px' : isCompact ? '8px' : isSpacious ? '11.5px' : isMidSize ? '10.5px' : '10px';       
+    const tCP = isSuperUltraCompact ? '0.1px 2px' : isUltraCompact ? '0.5px 2px' : isCompact ? '1px 2px' : isSpacious ? '3px 4px' : isMidSize ? '1.5px 3px' : '1px 3px'; 
+    const headWidth = isSuperUltraCompact ? '80%' : '90%';                          // Use 90% header width for everyone so it fits
+    const hPT = isSuperUltraCompact ? '25.6%' : '28.8%';                              // 32% relative crop (32% of 90% is 28.8%) for everyone
+    const iBM = isSuperUltraCompact ? '0px 16px 2px' : isUltraCompact ? '0px 16px 4px' : isCompact ? '2px 16px 6px' : '4px 16px 8px'; // info box margin
+    const fMB = isSuperUltraCompact ? '1px' : isUltraCompact ? '2px' : isCompact ? '4px' : '8px';            // footer margin bottom
+    const sealSz = isSuperUltraCompact ? '65px' : isUltraCompact ? '75px' : isCompact ? '81px' : '95px';       // seal size 
+    const ftrPad = isSuperUltraCompact ? '0.5px' : isUltraCompact ? '1px' : isCompact ? '2px' : '4px';         // footer disclaimer padding
+    const ftrSigMT = isSuperUltraCompact ? '2px' : isUltraCompact ? '4px' : '6px';       // footer signature margin-top
 
     return (
         <div className="official-transcript-paper" style={{
@@ -110,7 +111,7 @@ export default function OfficialTranscript({
             boxShadow: 'var(--shadow-lg)',
             fontFamily: '"Times New Roman", serif',
             fontSize: '12px',
-            lineHeight: '1.3',
+            lineHeight: isSuperUltraCompact ? '1.1' : '1.3',
             position: 'relative',
             overflow: 'hidden',
         }}>
@@ -135,7 +136,7 @@ export default function OfficialTranscript({
             </div>
 
             {/* ═══ DOE Header (Letterhead Image Scaled) ═══ */}
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: isCompact ? '4px' : '8px' }}>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: isSuperUltraCompact ? '2px' : isCompact ? '4px' : '8px' }}>
                 <div style={{ position: 'relative', width: headWidth, paddingTop: hPT, overflow: 'hidden' }}>
                     <img
                         src="/letterhead.jpg"
@@ -146,12 +147,12 @@ export default function OfficialTranscript({
             </div>
 
             {/* ═══ Student Info Box ═══ */}
-            <div style={{ border: border, margin: iBM, padding: isCompact ? '4px 8px' : '6px 8px', fontSize: isCompact ? '10px' : '11px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: isCompact ? '2px' : '4px' }}>
+            <div style={{ border: border, margin: iBM, padding: isSuperUltraCompact ? '2px 6px' : (isCompact ? '4px 8px' : '6px 8px'), fontSize: isSuperUltraCompact ? '9px' : (isCompact ? '10px' : '11px') }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: isSuperUltraCompact ? '1px' : (isCompact ? '2px' : '4px') }}>
                     <div>STUDENT'S NAME: <Field editMode={editMode} value={header.studentName} onChange={v => onHeaderChange('studentName', v)} /></div>
                     <div>PROGRAM OF STUDY: <Field editMode={editMode} value={header.program} onChange={v => onHeaderChange('program', v)} style={{ fontWeight: 'bold' }} /></div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: isCompact ? '1px' : '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: isSuperUltraCompact ? '0px' : (isCompact ? '1px' : '4px') }}>
                     <div>INSTRUCTOR: <Field editMode={editMode} value={header.instructor} onChange={v => onHeaderChange('instructor', v)} style={{ fontWeight: 'bold' }} /></div>
                     <div>COMPLETED PROGRAM: &nbsp;
                         <Field editMode={editMode} value={header.completedProgram || 'X'} onChange={v => onHeaderChange('completedProgram', v)} style={{ width: '14px', textAlign: 'center' }} /> YES &nbsp;&nbsp;
@@ -241,12 +242,12 @@ export default function OfficialTranscript({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'flex-end',
-                fontSize: '10px',
+                fontSize: isSuperUltraCompact ? '8.5px' : '10px',
             }}>
                 {/* Left — Signature */}
-                <div style={{ width: '32%', border: border, padding: ftrPad, fontSize: isCompact ? '7.5px' : '9px', display: 'flex', flexDirection: 'column' }}>
-                    <p style={{ textAlign: 'center', margin: '0 0 2px', fontWeight: 'bold', fontSize: isCompact ? '8px' : '10px' }}>Principal</p>
-                    <div style={{ position: 'relative', marginTop: '1.4rem' }}>
+                <div style={{ width: '32%', border: border, padding: ftrPad, fontSize: isSuperUltraCompact ? '7px' : (isCompact ? '7.5px' : '9px'), display: 'flex', flexDirection: 'column' }}>
+                    <p style={{ textAlign: 'center', margin: '0 0 2px', fontWeight: 'bold', fontSize: isSuperUltraCompact ? '7.5px' : (isCompact ? '8px' : '10px') }}>Principal</p>
+                    <div style={{ position: 'relative', marginTop: isSuperUltraCompact ? '1rem' : '1.4rem' }}>
                         <div style={{ position: 'absolute', bottom: '2px', width: '100%', textAlign: 'center' }}>
                             {editMode ? (
                                 <>
@@ -257,32 +258,32 @@ export default function OfficialTranscript({
                                             background: 'transparent',
                                             outline: 'none',
                                             fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
-                                            fontSize: '1.35rem',
+                                            fontSize: isSuperUltraCompact ? '1.10rem' : '1.35rem',
                                             padding: '0',
                                             textAlign: 'center',
                                             boxShadow: 'none',
                                         }}
-                                        value={header.principalSignature !== undefined ? header.principalSignature : 'Dr. Mario Francis'}
+                                        value={header.principalSignature !== undefined ? header.principalSignature : ''}
                                         onChange={e => onHeaderChange('principalSignature', e.target.value)}
                                     />
                                     <span className="print-text-only" style={{
                                         display: 'none',
                                         fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
-                                        fontSize: '1.35rem',
+                                        fontSize: isSuperUltraCompact ? '1.10rem' : '1.35rem',
                                         textAlign: 'center',
                                     }}>
-                                        {header.principalSignature !== undefined ? header.principalSignature : 'Dr. Mario Francis'}
+                                        {header.principalSignature !== undefined ? header.principalSignature : ''}
                                     </span>
                                 </>
                             ) : (
                                 <div style={{
                                     fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
-                                    fontSize: '1.35rem',
+                                    fontSize: isSuperUltraCompact ? '1.10rem' : '1.35rem',
                                     textAlign: 'center',
-                                    height: '1.35rem',
+                                    height: isSuperUltraCompact ? '1.10rem' : '1.35rem',
                                     lineHeight: '1',
                                 }}>
-                                    {header.principalSignature !== undefined ? header.principalSignature : 'Dr. Mario Francis'}
+                                    {header.principalSignature !== undefined ? header.principalSignature : ''}
                                 </div>
                             )}
                         </div>
@@ -307,14 +308,14 @@ export default function OfficialTranscript({
                 </div>
 
                 {/* Right — Issue Date, Hours, Graduation, Standing */}
-                <div style={{ width: '36%', fontSize: isCompact ? '9px' : '11px' }}>
-                    <div style={{ marginBottom: isCompact ? '2px' : '5px' }}>
+                <div style={{ width: '36%', fontSize: isSuperUltraCompact ? '8px' : (isCompact ? '9px' : '11px') }}>
+                    <div style={{ marginBottom: isSuperUltraCompact ? '2px' : (isCompact ? '2px' : '5px') }}>
                         TRANSCRIPT ISSUE DATE: <Field editMode={editMode} value={header.issueDate} onChange={v => onHeaderChange('issueDate', v)} />
                     </div>
-                    <div style={{ marginBottom: isCompact ? '1px' : '3px' }}>
+                    <div style={{ marginBottom: isSuperUltraCompact ? '1px' : (isCompact ? '1px' : '3px') }}>
                         TOTAL HOURS COMPLETED: <Field editMode={editMode} value={header.totalAccumulated} onChange={v => onHeaderChange('totalAccumulated', v)} style={{ fontWeight: 'bold' }} />
                     </div>
-                    <div style={{ marginBottom: isCompact ? '1px' : '3px' }}>
+                    <div style={{ marginBottom: isSuperUltraCompact ? '1px' : (isCompact ? '1px' : '3px') }}>
                         GRADUATION DATE: <Field editMode={editMode} value={header.graduationDate || ''} onChange={v => onHeaderChange('graduationDate', v)} style={{ fontWeight: 'bold' }} />
                     </div>
                     <div>
