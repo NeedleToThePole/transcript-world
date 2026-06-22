@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRequestById, getStudentByInternalId, getTranscriptByStudentId, saveTranscript, getTranscriptById, updateRequest } from '../lib/data';
+import { getRequestById, getStudentByInternalId, getTranscriptByStudentId, saveTranscript, getTranscriptById, updateRequest, createRequest, getRequests } from '../lib/data';
 import { getTemplateForProgram } from '../data/programTemplates';
 import { Printer, Save, Pencil, Eye, Mail, Check } from 'lucide-react';
 
@@ -312,13 +312,45 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
             lastModified: new Date().toISOString(),
         });
 
-        if (request) {
+        let reqObj = request;
+        if (!reqObj) {
+            const allReqs = await getRequests();
+            reqObj = allReqs.find(r => 
+                (r.enrolledStudentId && r.enrolledStudentId === studentId) ||
+                (student?.id && r.enrolledStudentId === student.id) ||
+                (student?.studentId && r.studentId === student.studentId && r.program === program)
+            );
+        }
+
+        if (reqObj) {
             const updateFields = { transcriptId: savedT.id };
-            if (status === 'complete' && (request.status === 'Pending' || request.status?.includes('Awaiting Grades'))) {
+            if (status === 'complete' && (reqObj.status === 'Pending' || reqObj.status?.includes('Awaiting Grades'))) {
                 updateFields.status = 'Ready for Review';
             }
-            await updateRequest(request.id, updateFields);
-            setRequest(prev => ({ ...prev, ...updateFields }));
+            await updateRequest(reqObj.id, updateFields);
+            if (request) {
+                setRequest(prev => ({ ...prev, ...updateFields }));
+            } else {
+                setRequest({ ...reqObj, ...updateFields });
+            }
+        } else if (forceComplete) {
+            const newReqData = {
+                firstName: student?.firstName || header.studentName?.split(' ')[0] || '',
+                lastName: student?.lastName || header.studentName?.split(' ').slice(1).join(' ') || '',
+                studentId: student?.studentId || header.studentId || '',
+                enrolledStudentId: student?.id || studentId,
+                email: student?.email || '',
+                phone: student?.phone || '',
+                program: program,
+                status: 'Ready for Review',
+                type: 'Official',
+                deliveryMethod: 'Email',
+                processingOption: 'Process Immediately',
+                copies: 1,
+                transcriptId: savedT.id,
+            };
+            const createdReq = await createRequest(newReqData);
+            setRequest(createdReq);
         }
 
         setSaveStatus(forceComplete ? 'force_saved' : 'saved');
@@ -366,10 +398,10 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                     {editMode ? <><Eye size={16} /> Preview</> : <><Pencil size={16} /> Edit</>}
                 </button>
                 <button className="btn btn-outline" onClick={() => handleSave()} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', ...(saveStatus === 'saved' ? { color: '#16a34a', borderColor: '#16a34a' } : {}) }}>
-                    {saveStatus === 'saving' ? '⏳ Saving...' : saveStatus === 'saved' ? <><Check size={16} /> Saved!</> : saveStatus === 'force_saved' ? <><Check size={16} /> Forced Complete!</> : <><Save size={16} /> Save</>}
+                    {saveStatus === 'saving' ? '⏳ Saving...' : saveStatus === 'saved' ? <><Check size={16} /> Saved!</> : saveStatus === 'force_saved' ? <><Check size={16} /> Sent to Admin!</> : <><Save size={16} /> Save</>}
                 </button>
-                <button className="btn btn-outline" onClick={() => { if (window.confirm('Override auto-detect and mark this transcript as COMPLETE?\n\nUse this for testing or special cases.')) handleSave(true); }} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#7c3aed', borderColor: '#c4b5fd', fontSize: '0.85rem' }}>
-                    ⚡ Force Complete
+                <button className="btn btn-outline" onClick={() => { if (window.confirm('Submit this transcript and send it to the Admin portal?')) handleSave(true); }} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#7c3aed', borderColor: '#c4b5fd', fontSize: '0.85rem' }}>
+                    📩 Send to Admin
                 </button>
                 <button className="btn btn-outline" onClick={handleEmail} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <Mail size={16} /> Email Student

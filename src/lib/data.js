@@ -27,10 +27,10 @@ export async function createRequest(requestData) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            ...requestData,
             status: 'Pending',
             requestDate: new Date().toISOString().split('T')[0],
-            id: `R${Date.now()}`
+            ...requestData,
+            id: requestData.id || `R${Date.now()}`
         }),
     });
     return res.json();
