@@ -166,6 +166,7 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                         totalProgramHours: existing?.header?.totalProgramHours || tmpl.defaults.totalProgramHours || '',
                         totalAccumulated: existing?.header?.totalAccumulated || tmpl.defaults.totalAccumulated || '',
                         ceus: existing?.header?.ceus || tmpl.defaults.ceus || '',
+                        instructor: existing?.header?.instructor || tmpl.defaults.instructor || '',
                         ...(existing?.header || {}),
                         studentName: existing?.header?.studentName || `${stu.firstName || ''} ${stu.lastName || ''}`.trim(),
                     }));
@@ -216,6 +217,7 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                         totalProgramHours: existing?.header?.totalProgramHours || tmpl.defaults.totalProgramHours || '',
                         totalAccumulated: existing?.header?.totalAccumulated || tmpl.defaults.totalAccumulated || '',
                         ceus: existing?.header?.ceus || tmpl.defaults.ceus || '',
+                        instructor: existing?.header?.instructor || tmpl.defaults.instructor || '',
                         ...(existing?.header || {}),
                     }));
 

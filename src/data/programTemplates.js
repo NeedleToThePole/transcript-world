@@ -1093,6 +1093,71 @@ const COMPUTER_APPLICATIONS = {
     ],
 };
 
+const PRACTICAL_NURSING = {
+    title: 'LPN TRANSCRIPT HOUR FORM',
+    layout: '2col-allied',
+    useColumnsAsTerms: true,
+    defaults: {
+        program: 'Practical Nursing',
+        instructor: 'Ms. Clarice Comissiong',
+        degree: 'Associate in Practical Nursing',
+        totalClassHours: '1178',
+        totalExternshipHours: '480',
+        totalProgramHours: '1658',
+        totalAccumulated: '1658',
+        ceus: '165.8',
+    },
+    columns: [
+        {
+            heading: 'Course- Term I',
+            topics: [
+                { name: 'Nursing Fundamentals', hoursReq: 78 },
+                { name: 'Anatomy & Physiology', hoursReq: 78 },
+                { name: 'Math Skills Dosage & Calculations', hoursReq: 52 },
+                { name: 'Medical Terminology', hoursReq: 39 },
+                { name: 'Nutrition & Diet Therapy', hoursReq: 39 },
+                { name: 'Computer Literacy', hoursReq: 52 },
+                { name: 'Professional Vocational Development', hoursReq: 52 },
+                { name: 'Labs Fundamentals', hoursReq: 52 },
+            ],
+        },
+        {
+            heading: 'Course- Term II',
+            topics: [
+                { name: 'Medical Surgical Nursing I', hoursReq: 78 },
+                { name: 'Pharmacology', hoursReq: 78 },
+                { name: 'Pediatrics', hoursReq: 52 },
+                { name: 'Obstetrics', hoursReq: 52 },
+                { name: 'Microbiology', hoursReq: 52 },
+                { name: 'Hospital Clinical', hoursReq: 60 },
+            ],
+        },
+        {
+            heading: 'Course- Term III',
+            topics: [
+                { name: 'Medical Surgical Nursing II', hoursReq: 78 },
+                { name: 'Gerontology', hoursReq: 52 },
+                { name: 'Leadership', hoursReq: 52 },
+                { name: 'Medical Surgical Clinical I', hoursReq: 130 },
+                { name: 'Maternity & Child Health Clinical I', hoursReq: 52 },
+            ],
+        },
+        {
+            heading: 'Course- Term IV',
+            topics: [
+                { name: 'Behavioral, Psychology & Mental Health', hoursReq: 52 },
+                { name: 'Population Health Clinical', hoursReq: 52 },
+                { name: 'NCLEX Review', hoursReq: 78 },
+                { name: 'Maternity & Child Health Clinical II', hoursReq: 52 },
+                { name: 'Behavioral Health Clinical', hoursReq: 52 },
+                { name: 'Medical Surgical Clinical II', hoursReq: 100 },
+                { name: 'Community Public Health', hoursReq: 52 },
+                { name: 'Public Health Clinical', hoursReq: 20 },
+            ],
+        },
+    ],
+};
+
 // ───────────────────────── Registry ─────────────────────────
 
 /** Look up the template by program name (case-insensitive substring match). */
@@ -1116,6 +1181,7 @@ export function getTemplateForProgram(programName) {
     if (p.includes('patient care') || p.includes('pct')) return PATIENT_CARE_TECH;
     if (p.includes('phlebotomy') || p.includes('phleb')) return PHLEBOTOMY;
     if (p.includes('computer')) return COMPUTER_APPLICATIONS;
+    if (p.includes('lpn') || p.includes('practical nursing') || p.includes('licensed practical nurse')) return PRACTICAL_NURSING;
     // Default to Allied Health for any other program
     return ALLIED_HEALTH;
 }
@@ -1139,4 +1205,5 @@ export {
     PATIENT_CARE_TECH,
     PHLEBOTOMY,
     COMPUTER_APPLICATIONS,
+    PRACTICAL_NURSING,
 };

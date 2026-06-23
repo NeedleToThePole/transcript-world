@@ -55,6 +55,7 @@ function splitIntoTerms(allTopics, allGrades, allHoursReq, allHoursComp) {
                 grade: allGrades[start + i] || '',
                 hoursReq: topic.hoursReq,
                 hoursComp: allHoursComp[start + i] || '',
+                globalIdx: start + i,
             })),
         });
     }
@@ -74,7 +75,26 @@ export default function OfficialTranscript({
     const allHoursComp = colHours.flat();
     const allGrades = grades || allTopics.map(() => '');
 
-    const terms = splitIntoTerms(allTopics, allGrades, [], allHoursComp);
+    let terms = [];
+    if (template.useColumnsAsTerms) {
+        let globalIdx = 0;
+        terms = template.columns.map((col, colIdx) => {
+            const termLabel = col.heading || `TERM ${colIdx + 1}`;
+            const courses = col.topics.map((topic, topicIdx) => {
+                const idx = globalIdx++;
+                return {
+                    name: topic.name,
+                    grade: allGrades[idx] || '',
+                    hoursReq: topic.hoursReq,
+                    hoursComp: allHoursComp[idx] || '',
+                    globalIdx: idx,
+                };
+            });
+            return { label: termLabel, courses };
+        });
+    } else {
+        terms = splitIntoTerms(allTopics, allGrades, [], allHoursComp);
+    }
 
     // Dynamic sizing: count total rows (courses + term headers) to decide compression
     const totalRows = allTopics.length + terms.length;
@@ -190,7 +210,7 @@ export default function OfficialTranscript({
                                     </td>
                                 </tr>
                                 {term.courses.map((course, ci) => {
-                                    const globalIdx = allTopics
+                                    const globalIdx = course.globalIdx !== undefined ? course.globalIdx : allTopics
                                         .findIndex(t => t.name === course.name && t.hoursReq === course.hoursReq);
                                     return (
                                         <tr key={ci}>

@@ -105,6 +105,7 @@ export default function OfficialTranscriptPage() {
                     totalProgramHours: existing?.header?.totalProgramHours || tmpl.defaults.totalProgramHours || '',
                     totalAccumulated: existing?.header?.totalAccumulated || tmpl.defaults.totalAccumulated || '',
                     ceus: existing?.header?.ceus || tmpl.defaults.ceus || '',
+                    instructor: existing?.header?.instructor || tmpl.defaults.instructor || '',
                     ...(existing?.header || {}),
                     principalSignature: existing?.header?.principalSignature || '',
                 }));
