@@ -31,7 +31,7 @@ export default function OfficialTranscriptPage() {
         studentName: '', program: '', instructor: '',
         totalProgramHours: '', totalAccumulated: '',
         gpa: '', ceus: '', issueDate: '', graduationDate: '',
-        degree: '', completedProgram: 'X',
+        degree: '', completedProgram: 'X', addSignature: false,
     });
 
     const [colHours, setColHours] = useState([]);
@@ -108,6 +108,7 @@ export default function OfficialTranscriptPage() {
                     instructor: existing?.header?.instructor || tmpl.defaults.instructor || '',
                     ...(existing?.header || {}),
                     principalSignature: existing?.header?.principalSignature || '',
+                    addSignature: existing?.header?.addSignature || false,
                 }));
 
                 if (existing?.colHours) setColHours(existing.colHours);
@@ -158,7 +159,35 @@ export default function OfficialTranscriptPage() {
                     style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <ArrowLeft size={16} /> Back to Unofficial
                 </button>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <label style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontSize: '0.85rem',
+                        fontWeight: '600',
+                        color: '#374151',
+                        cursor: 'pointer',
+                        padding: '0.5rem 0.75rem',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '0.375rem',
+                        backgroundColor: '#f9fafb',
+                        transition: 'all 0.2s',
+                        userSelect: 'none',
+                    }}>
+                        <input
+                            type="checkbox"
+                            checked={header.addSignature || false}
+                            onChange={e => updateHeader('addSignature', e.target.checked)}
+                            style={{
+                                cursor: 'pointer',
+                                width: '1rem',
+                                height: '1rem',
+                                accentColor: '#0f766e',
+                            }}
+                        />
+                        Add Signature
+                    </label>
                     <button className="btn btn-outline" onClick={handleSave} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', ...(saveStatus === 'saved' ? { color: '#16a34a', borderColor: '#16a34a' } : {}) }}>
                         {saveStatus === 'saving' ? '⏳ Saving...' : saveStatus === 'saved' ? <><Check size={16} /> Saved!</> : <><Save size={16} /> Save</>}
                     </button>

@@ -267,47 +267,62 @@ export default function OfficialTranscript({
                 {/* Left — Signature */}
                 <div style={{ width: '32%', border: border, padding: ftrPad, fontSize: isSuperUltraCompact ? '7px' : (isCompact ? '7.5px' : '9px'), display: 'flex', flexDirection: 'column' }}>
                     <p style={{ textAlign: 'center', margin: '0 0 2px', fontWeight: 'bold', fontSize: isSuperUltraCompact ? '7.5px' : (isCompact ? '8px' : '10px') }}>Principal</p>
-                    <div style={{ position: 'relative', marginTop: isSuperUltraCompact ? '1rem' : '1.4rem' }}>
-                        <div style={{ position: 'absolute', bottom: '2px', width: '100%', textAlign: 'center' }}>
-                            {editMode ? (
-                                <>
-                                    <input
-                                        style={{
-                                            width: '100%',
-                                            border: 'none',
-                                            background: 'transparent',
-                                            outline: 'none',
+                    <div style={{ position: 'relative', marginTop: isSuperUltraCompact ? '1.2rem' : '1.6rem', height: isSuperUltraCompact ? '24px' : '32px' }}>
+                        {header.addSignature ? (
+                            <div style={{ position: 'absolute', bottom: '-2px', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                                <img
+                                    src="/mario-signature.jpg"
+                                    alt="Dr. Mario Francis Signature"
+                                    style={{
+                                        height: isSuperUltraCompact ? '32px' : '40px',
+                                        width: 'auto',
+                                        mixBlendMode: 'multiply',
+                                        pointerEvents: 'none',
+                                    }}
+                                />
+                            </div>
+                        ) : (
+                            <div style={{ position: 'absolute', bottom: '2px', width: '100%', textAlign: 'center' }}>
+                                {editMode ? (
+                                    <>
+                                        <input
+                                            style={{
+                                                width: '100%',
+                                                border: 'none',
+                                                background: 'transparent',
+                                                outline: 'none',
+                                                fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
+                                                fontSize: isSuperUltraCompact ? '1.10rem' : '1.35rem',
+                                                padding: '0',
+                                                textAlign: 'center',
+                                                boxShadow: 'none',
+                                            }}
+                                            value={header.principalSignature !== undefined ? header.principalSignature : ''}
+                                            onChange={e => onHeaderChange('principalSignature', e.target.value)}
+                                        />
+                                        <span className="print-text-only" style={{
+                                            display: 'none',
                                             fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
                                             fontSize: isSuperUltraCompact ? '1.10rem' : '1.35rem',
-                                            padding: '0',
                                             textAlign: 'center',
-                                            boxShadow: 'none',
-                                        }}
-                                        value={header.principalSignature !== undefined ? header.principalSignature : ''}
-                                        onChange={e => onHeaderChange('principalSignature', e.target.value)}
-                                    />
-                                    <span className="print-text-only" style={{
-                                        display: 'none',
+                                        }}>
+                                            {header.principalSignature !== undefined ? header.principalSignature : ''}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <div style={{
                                         fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
                                         fontSize: isSuperUltraCompact ? '1.10rem' : '1.35rem',
                                         textAlign: 'center',
+                                        height: isSuperUltraCompact ? '1.10rem' : '1.35rem',
+                                        lineHeight: '1',
                                     }}>
                                         {header.principalSignature !== undefined ? header.principalSignature : ''}
-                                    </span>
-                                </>
-                            ) : (
-                                <div style={{
-                                    fontFamily: '"Brush Script MT", "Comic Sans MS", cursive',
-                                    fontSize: isSuperUltraCompact ? '1.10rem' : '1.35rem',
-                                    textAlign: 'center',
-                                    height: isSuperUltraCompact ? '1.10rem' : '1.35rem',
-                                    lineHeight: '1',
-                                }}>
-                                    {header.principalSignature !== undefined ? header.principalSignature : ''}
-                                </div>
-                            )}
-                        </div>
-                        <div style={{ borderTop: '1px solid black' }}></div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        <div style={{ borderTop: '1px solid black', position: 'absolute', bottom: '0', width: '100%' }}></div>
                     </div>
                     <div style={{ paddingTop: '2px', textAlign: 'center' }}>
                         Authorized Personnel, Title
