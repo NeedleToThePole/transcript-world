@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRequestById, getStudentByInternalId, getTranscriptByStudentId, saveTranscript, getTranscriptById, updateRequest, createRequest, getRequests } from '../lib/data';
+import { getRequestById, getStudentByInternalId, getTranscriptByStudentId, saveTranscript, getTranscriptById, updateRequest, createRequest, getRequests, getStudentsByProgram } from '../lib/data';
 import { getTemplateForProgram } from '../data/programTemplates';
-import { Printer, Save, Pencil, Eye, Mail, Check } from 'lucide-react';
+import { Printer, Save, Pencil, Eye, Mail, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // ─── Shared styles ───────────────────────────────────────────────
 const cellStyle = { border: '1px solid black', padding: '2px 4px', fontSize: '0.8rem' };
@@ -119,6 +119,8 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
     const [editMode, setEditMode] = useState(true);
     const [saveStatus, setSaveStatus] = useState('');
     const [transcriptStatus, setTranscriptStatus] = useState(null); // null | 'in_progress' | 'complete'
+    const [prevId, setPrevId] = useState(null);
+    const [nextId, setNextId] = useState(null);
 
     // Editable header fields
     const [header, setHeader] = useState({
@@ -146,6 +148,9 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
     const [colDates, setColDates] = useState([]);
 
     useEffect(() => {
+        setLoading(true);
+        setPrevId(null);
+        setNextId(null);
         if (mode === 'student') {
             // Load by student ID (teacher roster flow)
             getStudentByInternalId(id).then(async (stu) => {
@@ -181,6 +186,23 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                         setColDates(existing.colDates);
                     } else {
                         setColDates(tmpl.columns.map(col => col.topics.map(() => '')));
+                    }
+
+                    // Compute Prev/Next navigation
+                    try {
+                        const studentsList = await getStudentsByProgram(stu.program);
+                        const activeStudents = studentsList.filter(s => !s.archived);
+                        activeStudents.sort((a, b) => 
+                            (a.lastName || '').localeCompare(b.lastName || '') || 
+                            (a.firstName || '').localeCompare(b.firstName || '')
+                        );
+                        const idx = activeStudents.findIndex(s => s.id === id);
+                        if (idx !== -1) {
+                            if (idx > 0) setPrevId(activeStudents[idx - 1].id);
+                            if (idx < activeStudents.length - 1) setNextId(activeStudents[idx + 1].id);
+                        }
+                    } catch (err) {
+                        console.error('Failed to load sibling students:', err);
                     }
                 }
                 setLoading(false);
@@ -231,11 +253,31 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                     } else {
                         setColDates(tmpl.columns.map(col => col.topics.map(() => '')));
                     }
+
+                    // Compute Prev/Next navigation
+                    try {
+                        const allReqs = await getRequests();
+                        const filteredReqs = role === 'teacher'
+                            ? allReqs.filter(r => r.program === req.program)
+                            : allReqs;
+                        filteredReqs.sort((a, b) => {
+                            const dateA = a.requestDate || '';
+                            const dateB = b.requestDate || '';
+                            return dateB.localeCompare(dateA) || String(b.id).localeCompare(String(a.id));
+                        });
+                        const idx = filteredReqs.findIndex(r => r.id === id);
+                        if (idx !== -1) {
+                            if (idx > 0) setPrevId(filteredReqs[idx - 1].id);
+                            if (idx < filteredReqs.length - 1) setNextId(filteredReqs[idx + 1].id);
+                        }
+                    } catch (err) {
+                        console.error('Failed to load sibling requests:', err);
+                    }
                 }
                 setLoading(false);
             });
         }
-    }, [id, mode]);
+    }, [id, mode, role]);
 
     const updateHeader = (field, value) => {
         setHeader(h => ({ ...h, [field]: value }));
@@ -367,6 +409,16 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
         window.open(`mailto:${email}?subject=${subject}&body=${body}`, '_self');
     };
 
+    const handleBack = () => {
+        if (role === 'admin') {
+            navigate('/admin/requests');
+        } else if (mode === 'student') {
+            navigate('/teacher/students');
+        } else {
+            navigate('/teacher/transcripts');
+        }
+    };
+
     if (loading) return <div style={{ padding: '2rem' }}>Loading...</div>;
     if (!template) return <div style={{ padding: '2rem' }}>Request not found.</div>;
 
@@ -376,49 +428,81 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
     return (
         <div>
             {/* Toolbar */}
-            <div className="no-print" style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginBottom: '1.5rem', alignItems: 'center' }}>
-                {/* Status badge — pushed to the left */}
-                {transcriptStatus && (
-                    <div style={{
-                        marginRight: 'auto',
-                        padding: '0.4rem 1rem',
-                        borderRadius: '20px',
-                        fontSize: '0.85rem',
-                        fontWeight: '600',
-                        backgroundColor: transcriptStatus === 'complete' ? '#f0fdf4' : '#fefce8',
-                        color: transcriptStatus === 'complete' ? '#15803d' : '#a16207',
-                        border: `1px solid ${transcriptStatus === 'complete' ? '#bbf7d0' : '#fde68a'}`,
-                    }}>
-                        {transcriptStatus === 'complete' ? '✅ Completed' : '🔄 In Progress'}
-                    </div>
-                )}
-                <button
-                    className="btn btn-outline"
-                    onClick={() => setEditMode(!editMode)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-                >
-                    {editMode ? <><Eye size={16} /> Preview</> : <><Pencil size={16} /> Edit</>}
-                </button>
-                <button className="btn btn-outline" onClick={() => handleSave()} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', ...(saveStatus === 'saved' ? { color: '#16a34a', borderColor: '#16a34a' } : {}) }}>
-                    {saveStatus === 'saving' ? '⏳ Saving...' : saveStatus === 'saved' ? <><Check size={16} /> Saved!</> : saveStatus === 'force_saved' ? <><Check size={16} /> Sent to Admin!</> : <><Save size={16} /> Save</>}
-                </button>
-                <button className="btn btn-outline" onClick={() => { if (window.confirm('Submit this transcript and send it to the Admin portal?')) handleSave(true); }} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#7c3aed', borderColor: '#c4b5fd', fontSize: '0.85rem' }}>
-                    📩 Send to Admin
-                </button>
-                <button className="btn btn-outline" onClick={handleEmail} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <Mail size={16} /> Email Student
-                </button>{role === 'admin' && (
+            <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem', alignItems: 'center', gap: '0.75rem' }}>
+                {/* Left side: Navigation & Status */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <button
                         className="btn btn-outline"
-                        onClick={() => navigate(`/admin/official/${id}`)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#0d9488', borderColor: '#0d9488' }}
+                        onClick={handleBack}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.4rem 0.8rem' }}
                     >
-                        📜 Convert to Official
+                        <ChevronLeft size={16} /> Back
                     </button>
-                )}
-                <button className="btn btn-primary" onClick={handlePrint} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <Printer size={16} /> Print / PDF
-                </button>
+                    <div style={{ display: 'flex', gap: '0.25rem' }}>
+                        <button
+                            className="btn btn-outline"
+                            onClick={() => prevId && navigate(mode === 'student' ? `/teacher/transcript-entry/${prevId}` : `/${role}/transcript/${prevId}`)}
+                            disabled={!prevId}
+                            title="Previous Transcript"
+                            style={{ padding: '0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: !prevId ? 0.5 : 1, cursor: !prevId ? 'not-allowed' : 'pointer' }}
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
+                        <button
+                            className="btn btn-outline"
+                            onClick={() => nextId && navigate(mode === 'student' ? `/teacher/transcript-entry/${nextId}` : `/${role}/transcript/${nextId}`)}
+                            disabled={!nextId}
+                            title="Next Transcript"
+                            style={{ padding: '0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: !nextId ? 0.5 : 1, cursor: !nextId ? 'not-allowed' : 'pointer' }}
+                        >
+                            <ChevronRight size={18} />
+                        </button>
+                    </div>
+                    {transcriptStatus && (
+                        <div style={{
+                            padding: '0.4rem 1rem',
+                            borderRadius: '20px',
+                            fontSize: '0.85rem',
+                            fontWeight: '600',
+                            backgroundColor: transcriptStatus === 'complete' ? '#f0fdf4' : '#fefce8',
+                            color: transcriptStatus === 'complete' ? '#15803d' : '#a16207',
+                            border: `1px solid ${transcriptStatus === 'complete' ? '#bbf7d0' : '#fde68a'}`,
+                        }}>
+                            {transcriptStatus === 'complete' ? '✅ Completed' : '🔄 In Progress'}
+                        </div>
+                    )}
+                </div>
+
+                {/* Right side: Action buttons */}
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <button
+                        className="btn btn-outline"
+                        onClick={() => setEditMode(!editMode)}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                    >
+                        {editMode ? <><Eye size={16} /> Preview</> : <><Pencil size={16} /> Edit</>}
+                    </button>
+                    <button className="btn btn-outline" onClick={() => handleSave()} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', ...(saveStatus === 'saved' ? { color: '#16a34a', borderColor: '#16a34a' } : {}) }}>
+                        {saveStatus === 'saving' ? '⏳ Saving...' : saveStatus === 'saved' ? <><Check size={16} /> Saved!</> : saveStatus === 'force_saved' ? <><Check size={16} /> Sent to Admin!</> : <><Save size={16} /> Save</>}
+                    </button>
+                    <button className="btn btn-outline" onClick={() => { if (window.confirm('Submit this transcript and send it to the Admin portal?')) handleSave(true); }} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#7c3aed', borderColor: '#c4b5fd', fontSize: '0.85rem' }}>
+                        📩 Send to Admin
+                    </button>
+                    <button className="btn btn-outline" onClick={handleEmail} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Mail size={16} /> Email Student
+                    </button>{role === 'admin' && (
+                        <button
+                            className="btn btn-outline"
+                            onClick={() => navigate(`/admin/official/${id}`)}
+                            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#0d9488', borderColor: '#0d9488' }}
+                        >
+                            📜 Convert to Official
+                        </button>
+                    )}
+                    <button className="btn btn-primary" onClick={handlePrint} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Printer size={16} /> Print / PDF
+                    </button>
+                </div>
             </div>
 
             {/* Transcript Document */}
