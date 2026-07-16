@@ -269,12 +269,12 @@ export default function OfficialTranscript({
                     <p style={{ textAlign: 'center', margin: '0 0 2px', fontWeight: 'bold', fontSize: isSuperUltraCompact ? '7.5px' : (isCompact ? '8px' : '10px') }}>Principal</p>
                     <div style={{ position: 'relative', marginTop: isSuperUltraCompact ? '1.2rem' : '1.6rem', height: isSuperUltraCompact ? '24px' : '32px' }}>
                         {header.addSignature ? (
-                            <div style={{ position: 'absolute', bottom: '-2px', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                            <div style={{ position: 'absolute', bottom: isSuperUltraCompact ? '-10px' : '-18px', width: '100%', display: 'flex', justifyContent: 'center' }}>
                                 <img
                                     src="/mario-signature.jpg"
                                     alt="Dr. Mario Francis Signature"
                                     style={{
-                                        height: isSuperUltraCompact ? '32px' : '40px',
+                                        height: isSuperUltraCompact ? '75px' : '100px',
                                         width: 'auto',
                                         mixBlendMode: 'multiply',
                                         pointerEvents: 'none',
