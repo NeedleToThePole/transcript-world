@@ -59,6 +59,7 @@
         margin: 0 !important;
         padding: 0 !important;
         page-break-inside: avoid;
+        min-height: 0 !important;
     }
 
     .official-transcript-paper h1 {

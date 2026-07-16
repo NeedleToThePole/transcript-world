@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 /**
  * OfficialTranscript — DOE-branded official transcript layout.
@@ -71,6 +71,47 @@ export default function OfficialTranscript({
     onHeaderChange,
     editMode,
 }) {
+    const [transparentSig, setTransparentSig] = useState('');
+
+    useEffect(() => {
+        if (header.addSignature && !transparentSig) {
+            const img = new Image();
+            img.src = '/mario-signature.jpg';
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                try {
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imgData.data;
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i];
+                        const g = data[i+1];
+                        const b = data[i+2];
+                        
+                        const brightness = (r + g + b) / 3;
+                        if (brightness > 200) {
+                            const alpha = Math.max(0, Math.min(255, (255 - brightness) * 4.6));
+                            data[i+3] = alpha;
+                        }
+                    }
+                    ctx.putImageData(imgData, 0, 0);
+                    setTransparentSig(canvas.toDataURL('image/png'));
+                } catch (e) {
+                    console.error('Failed to process signature transparency:', e);
+                    setTransparentSig('/mario-signature.jpg');
+                }
+            };
+            img.onerror = () => {
+                setTransparentSig('/mario-signature.jpg');
+            };
+        }
+    }, [header.addSignature, transparentSig]);
     const allTopics = template.columns.flatMap(col => col.topics);
     const allHoursComp = colHours.flat();
     const allGrades = grades || allTopics.map(() => '');
@@ -271,7 +312,7 @@ export default function OfficialTranscript({
                         {header.addSignature ? (
                             <div style={{ position: 'absolute', bottom: isSuperUltraCompact ? '-10px' : '-18px', width: '100%', display: 'flex', justifyContent: 'center' }}>
                                 <img
-                                    src="/mario-signature.jpg"
+                                    src={transparentSig || '/mario-signature.jpg'}
                                     alt="Dr. Mario Francis Signature"
                                     style={{
                                         height: isSuperUltraCompact ? '75px' : '100px',

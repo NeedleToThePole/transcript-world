@@ -33,7 +33,7 @@ export default function AdminToast() {
     if (readyCount === 0 || dismissed) return null;
 
     return (
-        <div style={{
+        <div className="no-print" style={{
             position: 'fixed',
             bottom: visible ? '1.5rem' : '-120px',
             right: '1.5rem',
