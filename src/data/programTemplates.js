@@ -320,6 +320,113 @@ const COSMETOLOGY_FUNDAMENTALS = {
     ],
 };
 
+// ──────────────── Auto Mechanic Repair ────────────────
+
+const AUTO_MECHANIC = {
+    title: 'Auto Mechanic Repair Transcript Card',
+    layout: 'stacked',
+    gridCols: 2,
+    useColumnsAsTerms: true,
+    hideRightFooter: true,
+    signatures: [
+        'Instructor',
+        'Charles R. Jones Jr.- Auto Mechanics Instructor'
+    ],
+    defaults: {
+        program: 'Auto Mechanic Repair',
+        instructor: 'Charles R. Jones Jr.',
+        totalClassHours: '780',
+        totalExternshipHours: '120',
+        totalProgramHours: '900',
+        totalAccumulated: '900',
+        ceus: '90.0',
+    },
+    columns: [
+        {
+            heading: 'SEMESTER I',
+            topics: [
+                { name: 'Shop Safety & Review of Engine Operation', hoursReq: 10 },
+                { name: 'Electricity and Electronics for Engines', hoursReq: 15 },
+                { name: 'Tools, Equipment, Service Information & Work Orders', hoursReq: 10 },
+                { name: 'Cooling System Operation and Service', hoursReq: 12 },
+                { name: 'Engine Performance & Mechanical Problems', hoursReq: 15 },
+                { name: 'Engine Problem Diagnosis and Tune-Up', hoursReq: 18 },
+                { name: 'Engine Removal, Disassembly, and Cleaning', hoursReq: 20 },
+                { name: 'ASE Engine Certification Prep & Career Success', hoursReq: 5 },
+                { name: 'Shop Safety & Environmental Protection (Transmissions)', hoursReq: 6 },
+                { name: 'Introduction to Automatic Transmissions & Transaxles', hoursReq: 10 },
+                { name: 'Special Service Tools, Gears, Chains, and Bearings', hoursReq: 12 },
+                { name: 'Basic Electricity & Electronics / Electronic Control Systems', hoursReq: 18 },
+                { name: 'Transmission & Transaxle In-Vehicle Service', hoursReq: 16 },
+                { name: 'Rebuilding Automatic Transmissions & Transaxles', hoursReq: 25 },
+                { name: 'Troubleshooting Mechanical, Hydraulic & Electrical Problems', hoursReq: 10 },
+                { name: 'ASE Certification Prep & Career Preparation', hoursReq: 5 },
+            ],
+        },
+        {
+            heading: 'SEMESTER II',
+            topics: [
+                { name: 'Shop Safety & Environmental Protection (Suspension)', hoursReq: 5 },
+                { name: 'Basic Suspension & Steering Systems Operation', hoursReq: 10 },
+                { name: 'Common Suspension System Components', hoursReq: 10 },
+                { name: 'Front Suspension Systems & Service', hoursReq: 15 },
+                { name: 'Rear Suspension Systems & Service', hoursReq: 12 },
+                { name: 'Steering Systems, Linkage & Manual Steering Gear Service', hoursReq: 15 },
+                { name: 'Driveline & Wheel Components & Service', hoursReq: 10 },
+                { name: 'Electronic Suspension & Steering Systems', hoursReq: 10 },
+                { name: 'Wheel Alignment Procedures & Troubleshooting', hoursReq: 8 },
+                { name: 'Intro to Manual Drive Trains, Gears & Lubricants', hoursReq: 10 },
+                { name: 'Clutch Construction, Operation & Service', hoursReq: 16 },
+                { name: 'Manual Transmission Construction & Service', hoursReq: 18 },
+                { name: 'Manual Transaxle Construction & Service', hoursReq: 16 },
+                { name: 'Drive Shaft & CV Axle Assembly Service', hoursReq: 20 },
+                { name: 'Rear Axle Assembly Construction & Service', hoursReq: 10 },
+                { name: 'Four-Wheel Drive (4WD) Component Service & NVH', hoursReq: 6 },
+            ],
+        },
+        {
+            heading: 'SEMESTER III',
+            topics: [
+                { name: 'Shop Safety & Intro to Automotive HVAC', hoursReq: 6 },
+                { name: 'HVAC Tools, Equipment & Service Information', hoursReq: 10 },
+                { name: 'Refrigeration Principles, Refrigerants & Oils', hoursReq: 12 },
+                { name: 'Compressors, Clutches, Evaporators & Condensers', hoursReq: 20 },
+                { name: 'Engine Cooling Systems & Vehicle Heaters Service', hoursReq: 14 },
+                { name: 'Refrigerant Recovery, Recycling & Handling (EPA 609)', hoursReq: 15 },
+                { name: 'Control Valves, Switches & Air Delivery Systems', hoursReq: 12 },
+                { name: 'Manual & Automatic Climate Control Diagnosis & Leak Detection', hoursReq: 13 },
+                { name: 'Safety & Intro to Engine Performance', hoursReq: 7 },
+                { name: 'Tools, Test Equipment & Engine Construction Fundamentals', hoursReq: 15 },
+                { name: 'Ignition System Fundamentals & Service', hoursReq: 18 },
+                { name: 'Fuel System Fundamentals & Service', hoursReq: 20 },
+                { name: 'Drive Train & Electronic System Diagnostics', hoursReq: 15 },
+                { name: 'Basic Diagnostic Procedures & Troubleshooting Techniques', hoursReq: 15 },
+                { name: 'Engine Mechanical Diagnosis & ASE Certification Prep', hoursReq: 15 },
+            ],
+        },
+        {
+            heading: 'SEMESTER IV',
+            topics: [
+                { name: 'Shop Safety & Intro to Brake Systems', hoursReq: 6 },
+                { name: 'Brake Tools, Shop Equipment & Troubleshooting', hoursReq: 10 },
+                { name: 'Hydraulic System Fundamentals, Valves, Lines & Hoses', hoursReq: 14 },
+                { name: 'Master Cylinders, Calipers, Wheel Cylinders & Power Assist Units', hoursReq: 18 },
+                { name: 'Disc & Drum Brake System Components & Service', hoursReq: 22 },
+                { name: 'Wheel Bearings, Oil Seals & Parking Brake Service', hoursReq: 12 },
+                { name: 'Anti-Lock Brakes (ABS), Traction Control & Stability Control (ESC)', hoursReq: 18 },
+                { name: 'Review of Safety & Electrical/Electronic Systems Overview', hoursReq: 7 },
+                { name: 'Electric Circuits, Ohm’s Law & Test Equipment', hoursReq: 15 },
+                { name: 'Automotive Computer Operation & Battery Technology', hoursReq: 15 },
+                { name: 'Starting & Charging Systems Diagnosis & Repair', hoursReq: 20 },
+                { name: 'Ignition, Fuel & Emission Control Electronics', hoursReq: 20 },
+                { name: 'Lighting, Instrumentation, Navigation & Power Accessories', hoursReq: 15 },
+                { name: 'Hybrid Drive Systems & Advanced Diagnostics', hoursReq: 15 },
+                { name: 'Automotive Repair Externship:', hoursReq: 120 },
+            ],
+        },
+    ],
+};
+
 // ──────────────── Hair Braiding ────────────────
 
 const HAIR_BRAIDING = {
@@ -1182,6 +1289,7 @@ export function getTemplateForProgram(programName) {
     if (p.includes('phlebotomy') || p.includes('phleb')) return PHLEBOTOMY;
     if (p.includes('computer')) return COMPUTER_APPLICATIONS;
     if (p.includes('lpn') || p.includes('practical nursing') || p.includes('licensed practical nurse')) return PRACTICAL_NURSING;
+    if (p.includes('auto') || p.includes('mechanic') || p.includes('automotive')) return AUTO_MECHANIC;
     // Default to Allied Health for any other program
     return ALLIED_HEALTH;
 }
@@ -1206,4 +1314,5 @@ export {
     PHLEBOTOMY,
     COMPUTER_APPLICATIONS,
     PRACTICAL_NURSING,
+    AUTO_MECHANIC,
 };

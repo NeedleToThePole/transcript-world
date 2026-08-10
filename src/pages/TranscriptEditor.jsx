@@ -304,7 +304,7 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
         if (!header.program || !colHours || colHours.length === 0) return;
 
         // Opt-in list of programs for auto-calculation
-        const autoCalcPrograms = ['Barbering', 'Cosmetology Fundamentals', 'Cosmetology Foundation'];
+        const autoCalcPrograms = ['Barbering', 'Cosmetology Fundamentals', 'Cosmetology Foundation', 'Auto Mechanic Repair', 'Auto Mechanics', 'Auto Mechanic'];
 
         if (autoCalcPrograms.includes(header.program)) {
             // Calculate total accumulated hours
