@@ -414,7 +414,7 @@ const AUTO_MECHANIC = {
                 { name: 'Wheel Bearings, Oil Seals & Parking Brake Service', hoursReq: 12 },
                 { name: 'Anti-Lock Brakes (ABS), Traction Control & Stability Control (ESC)', hoursReq: 18 },
                 { name: 'Review of Safety & Electrical/Electronic Systems Overview', hoursReq: 7 },
-                { name: 'Electric Circuits, Ohm’s Law & Test Equipment', hoursReq: 15 },
+                { name: "Electric Circuits, Ohm's Law & Test Equipment", hoursReq: 15 },
                 { name: 'Automotive Computer Operation & Battery Technology', hoursReq: 15 },
                 { name: 'Starting & Charging Systems Diagnosis & Repair', hoursReq: 20 },
                 { name: 'Ignition, Fuel & Emission Control Electronics', hoursReq: 20 },

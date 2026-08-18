@@ -176,16 +176,20 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                         studentName: existing?.header?.studentName || `${stu.firstName || ''} ${stu.lastName || ''}`.trim(),
                     }));
 
-                    // Restore saved hours or initialize empty
+                    // Restore saved hours or initialize empty — pad to match template columns
+                    const freshHours = tmpl.columns.map(col => col.topics.map(() => ''));
                     if (existing?.colHours) {
-                        setColHours(existing.colHours);
+                        const padded = freshHours.map((empty, ci) => existing.colHours[ci] || empty);
+                        setColHours(padded);
                     } else {
-                        setColHours(tmpl.columns.map(col => col.topics.map(() => '')));
+                        setColHours(freshHours);
                     }
+                    const freshDates = tmpl.columns.map(col => col.topics.map(() => ''));
                     if (existing?.colDates) {
-                        setColDates(existing.colDates);
+                        const padded = freshDates.map((empty, ci) => existing.colDates[ci] || empty);
+                        setColDates(padded);
                     } else {
-                        setColDates(tmpl.columns.map(col => col.topics.map(() => '')));
+                        setColDates(freshDates);
                     }
 
                     // Compute Prev/Next navigation
@@ -243,15 +247,20 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
                         ...(existing?.header || {}),
                     }));
 
+                    // Pad to match template columns in case saved data has fewer
+                    const freshHours = tmpl.columns.map(col => col.topics.map(() => ''));
                     if (existing?.colHours) {
-                        setColHours(existing.colHours);
+                        const padded = freshHours.map((empty, ci) => existing.colHours[ci] || empty);
+                        setColHours(padded);
                     } else {
-                        setColHours(tmpl.columns.map(col => col.topics.map(() => '')));
+                        setColHours(freshHours);
                     }
+                    const freshDates = tmpl.columns.map(col => col.topics.map(() => ''));
                     if (existing?.colDates) {
-                        setColDates(existing.colDates);
+                        const padded = freshDates.map((empty, ci) => existing.colDates[ci] || empty);
+                        setColDates(padded);
                     } else {
-                        setColDates(tmpl.columns.map(col => col.topics.map(() => '')));
+                        setColDates(freshDates);
                     }
 
                     // Compute Prev/Next navigation
@@ -286,6 +295,9 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
     const updateColHourAt = (colIdx, rowIdx, value) => {
         setColHours(prev => {
             const copy = prev.map(arr => [...arr]);
+            // Safety: ensure the column array exists
+            while (copy.length <= colIdx) copy.push([]);
+            while (copy[colIdx].length <= rowIdx) copy[colIdx].push('');
             copy[colIdx][rowIdx] = value;
             return copy;
         });
@@ -294,6 +306,9 @@ export default function TranscriptEditor({ role = 'admin', mode = 'request' }) {
     const updateColDateAt = (colIdx, rowIdx, value) => {
         setColDates(prev => {
             const copy = prev.map(arr => [...arr]);
+            // Safety: ensure the column array exists
+            while (copy.length <= colIdx) copy.push([]);
+            while (copy[colIdx].length <= rowIdx) copy[colIdx].push('');
             copy[colIdx][rowIdx] = value;
             return copy;
         });
