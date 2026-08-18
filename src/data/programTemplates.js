@@ -327,7 +327,6 @@ const AUTO_MECHANIC = {
     layout: 'stacked',
     gridCols: 2,
     useColumnsAsTerms: true,
-    hideRightFooter: true,
     signatures: [
         'Instructor',
         'Charles R. Jones Jr.- Auto Mechanics Instructor'
