@@ -24,7 +24,7 @@ export default function RequestQueue() {
         fetchRequests();
     };
 
-    const statuses = ['All', 'Ready for Review', 'Pending', 'Pending — Awaiting Grades', 'Processing', 'Completed'];
+    const statuses = ['All', 'Ready for Review', 'Pending', 'Pending — Verification Needed', 'Pending — Awaiting Grades', 'Processing', 'Completed'];
 
     const handleSort = (key) => {
         let direction = 'asc';
@@ -80,6 +80,7 @@ export default function RequestQueue() {
         const colors = {
             'Ready for Review': { bg: '#f0fdf4', color: '#15803d' },
             'Pending': { bg: '#fff7ed', color: '#c2410c' },
+            'Pending — Verification Needed': { bg: '#fef2f2', color: '#b91c1c' },
             'Pending — Awaiting Grades': { bg: '#fefce8', color: '#a16207' },
             'Processing': { bg: '#eff6ff', color: '#1d4ed8' },
             'Completed': { bg: '#f0fdf4', color: '#15803d' },

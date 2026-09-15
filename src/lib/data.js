@@ -147,11 +147,41 @@ export async function saveTranscript(transcript) {
     }
 }
 
-export async function lookupStudentForRequest(studentId, program) {
-    // Find student by studentId number + program
-    const res = await fetch(`${API_URL}/students?studentId=${encodeURIComponent(studentId)}&program=${encodeURIComponent(program)}&archived=false`);
+export async function lookupStudentForRequest(studentIdOrData, programArg, emailArg, firstNameArg, lastNameArg) {
+    let studentId = '';
+    let program = '';
+    let email = '';
+    let firstName = '';
+    let lastName = '';
+
+    if (typeof studentIdOrData === 'object' && studentIdOrData !== null) {
+        studentId = studentIdOrData.studentId || '';
+        program = studentIdOrData.program || '';
+        email = studentIdOrData.email || '';
+        firstName = studentIdOrData.firstName || '';
+        lastName = studentIdOrData.lastName || '';
+    } else {
+        studentId = studentIdOrData || '';
+        program = programArg || '';
+        email = emailArg || '';
+        firstName = firstNameArg || '';
+        lastName = lastNameArg || '';
+    }
+
+    const params = new URLSearchParams({
+        studentId: (studentId || '').trim(),
+        program: (program || '').trim(),
+        email: (email || '').trim(),
+        firstName: (firstName || '').trim(),
+        lastName: (lastName || '').trim(),
+        archived: 'false',
+    });
+
+    const res = await fetch(`${API_URL}/students?${params.toString()}`);
     const students = await res.json();
-    if (students.length === 0) return { status: 'not_enrolled', student: null, transcript: null };
+    if (!Array.isArray(students) || students.length === 0) {
+        return { status: 'verification_needed', student: null, transcript: null };
+    }
 
     const student = students[0];
     const transcript = await getTranscriptByStudentId(student.id);

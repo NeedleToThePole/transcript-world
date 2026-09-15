@@ -11,7 +11,7 @@ export default function Dashboard() {
         getRequests().then(data => {
             setStats({
                 total: data.length,
-                pending: data.filter(r => r.status === 'Pending').length,
+                pending: data.filter(r => r.status?.startsWith('Pending')).length,
                 completed: data.filter(r => r.status === 'Completed').length
             });
             setRecentRequests(data.slice(0, 5)); // Get first 5

@@ -25,26 +25,28 @@ export default function StudentRequest() {
         setSubmitting(true);
         setRequestResult(null);
 
-        const lookup = await lookupStudentForRequest(formData.studentId, formData.program);
+        const lookup = await lookupStudentForRequest(formData);
 
         let status, message;
-        if (lookup.status === 'not_enrolled' && formData.studentId.toUpperCase() !== 'TEST') {
-            setRequestResult({
-                status: 'error',
-                message: 'You are not enrolled in this program. Please contact your teacher to be added to the roster.'
-            });
-            setSubmitting(false);
-            return;
-        } else if (lookup.status === 'ready') {
+        if (lookup.status === 'ready') {
             status = 'Ready for Review';
             message = 'Your transcript is complete and has been sent to the admin for review!';
-        } else {
+        } else if (lookup.status === 'in_progress' || lookup.status === 'awaiting_grades') {
             status = 'Pending — Awaiting Grades';
             message = 'Your request has been submitted. Your instructor has not yet completed your transcript.';
+        } else {
+            // Student not immediately found on active roster — allow submission under verification
+            status = 'Pending — Verification Needed';
+            message = 'Your transcript request has been received! Our administration office will verify your enrollment records and process your transcript.';
         }
 
         await createRequest({
             ...formData,
+            studentId: (formData.studentId || '').trim(),
+            program: (formData.program || '').trim(),
+            email: (formData.email || '').trim(),
+            firstName: (formData.firstName || '').trim(),
+            lastName: (formData.lastName || '').trim(),
             status,
             transcriptId: lookup.transcript?.id || null,
             enrolledStudentId: lookup.student?.id || null,
