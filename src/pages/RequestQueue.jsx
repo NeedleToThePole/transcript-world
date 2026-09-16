@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getRequests, updateRequestStatus } from '../lib/data';
+import { getRequests, updateRequestStatus, addStudent, updateRequest } from '../lib/data';
 import { Link } from 'react-router-dom';
-import { Eye, Check, X, Printer, Mail, FileText, Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
+import { Eye, Check, X, Printer, Mail, FileText, Search, ArrowUpDown, ChevronUp, ChevronDown, UserPlus } from 'lucide-react';
 
 export default function RequestQueue() {
     const [requests, setRequests] = useState([]);
@@ -24,7 +24,29 @@ export default function RequestQueue() {
         fetchRequests();
     };
 
-    const statuses = ['All', 'Ready for Review', 'Pending', 'Pending — Verification Needed', 'Pending — Awaiting Grades', 'Processing', 'Completed'];
+    const handleAddToRoster = async (req) => {
+        if (!window.confirm(`Add ${req.firstName} ${req.lastName} to the active roster for ${req.program}?`)) return;
+        try {
+            const newStudent = await addStudent({
+                firstName: req.firstName,
+                lastName: req.lastName,
+                email: req.email,
+                phone: req.phone,
+                studentId: req.studentId,
+                program: req.program,
+            });
+            await updateRequest(req.id, {
+                enrolledStudentId: newStudent.id || newStudent._id,
+                notInSystem: false,
+                status: 'Processing',
+            });
+            fetchRequests();
+        } catch (err) {
+            alert('Failed to add student to roster: ' + err.message);
+        }
+    };
+
+    const statuses = ['All', 'Ready for Review', 'Not in System', 'Pending', 'Pending — Awaiting Grades', 'Processing', 'Completed'];
 
     const handleSort = (key) => {
         let direction = 'asc';
@@ -52,7 +74,11 @@ export default function RequestQueue() {
     // Filter by status
     const filteredByStatus = filter === 'All'
         ? searchedRequests
-        : searchedRequests.filter(r => r.status === filter || (filter === 'Pending' && r.status?.startsWith('Pending')));
+        : searchedRequests.filter(r => {
+            if (filter === 'Not in System') return r.status === 'Not in System' || r.notInSystem;
+            if (filter === 'Pending') return r.status === 'Pending' || r.status?.startsWith('Pending') || r.status === 'Not in System' || r.notInSystem;
+            return r.status === filter;
+        });
 
     // Sort requests
     const sortedRequests = [...filteredByStatus].sort((a, b) => {
@@ -80,12 +106,14 @@ export default function RequestQueue() {
         const colors = {
             'Ready for Review': { bg: '#f0fdf4', color: '#15803d' },
             'Pending': { bg: '#fff7ed', color: '#c2410c' },
-            'Pending — Verification Needed': { bg: '#fef2f2', color: '#b91c1c' },
+            'Not in System': { bg: '#fee2e2', color: '#dc2626' },
+            'Pending — Verification Needed': { bg: '#fee2e2', color: '#dc2626' },
             'Pending — Awaiting Grades': { bg: '#fefce8', color: '#a16207' },
             'Processing': { bg: '#eff6ff', color: '#1d4ed8' },
             'Completed': { bg: '#f0fdf4', color: '#15803d' },
         };
-        const c = colors[status] || colors['Pending'];
+        const c = colors[status] || (status?.includes('System') ? { bg: '#fee2e2', color: '#dc2626' } : colors['Pending']);
+        const isWarning = status === 'Not in System' || status === 'Pending — Verification Needed' || status?.includes('System');
         return (
             <span style={{
                 padding: '0.25rem 0.75rem',
@@ -95,7 +123,11 @@ export default function RequestQueue() {
                 color: c.color,
                 fontWeight: '600',
                 whiteSpace: 'nowrap',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
             }}>
+                {isWarning && '⚠️ '}
                 {status}
             </span>
         );
@@ -201,8 +233,18 @@ export default function RequestQueue() {
                                                 </>
                                             )}
 
-                                            {(req.status === 'Pending' || req.status?.startsWith('Pending')) && (
+                                            {(req.status === 'Pending' || req.status?.startsWith('Pending') || req.status === 'Not in System' || req.notInSystem) && (
                                                 <>
+                                                    {(req.status === 'Not in System' || req.notInSystem) && (
+                                                        <button
+                                                            className="btn btn-outline"
+                                                            style={{ padding: '0.4rem', color: '#0d9488', borderColor: '#0d9488' }}
+                                                            onClick={() => handleAddToRoster(req)}
+                                                            title="Add Student to Class Roster"
+                                                        >
+                                                            <UserPlus size={16} />
+                                                        </button>
+                                                    )}
                                                     <button
                                                         className="btn btn-outline"
                                                         style={{ padding: '0.4rem', color: 'var(--success-color)', borderColor: 'var(--success-color)' }}
@@ -249,6 +291,32 @@ export default function RequestQueue() {
                                 {expandedIds.has(req.id) && (
                                     <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #f1f5f9' }}>
                                         <td colSpan="6" style={{ padding: '1rem 1.5rem' }}>
+                                            {(req.status === 'Not in System' || req.notInSystem) && (
+                                                <div style={{
+                                                    marginBottom: '1rem',
+                                                    padding: '0.75rem 1rem',
+                                                    borderRadius: '8px',
+                                                    backgroundColor: '#fee2e2',
+                                                    border: '1px solid #fecaca',
+                                                    color: '#991b1b',
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    flexWrap: 'wrap',
+                                                    gap: '0.5rem',
+                                                }}>
+                                                    <div>
+                                                        <strong>⚠️ Not in System:</strong> This student was not found on the active roster for <em>{req.program}</em>.
+                                                    </div>
+                                                    <button
+                                                        className="btn btn-primary"
+                                                        style={{ fontSize: '0.8rem', padding: '0.35rem 0.85rem', backgroundColor: '#0d9488', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                                                        onClick={() => handleAddToRoster(req)}
+                                                    >
+                                                        <UserPlus size={14} /> Add to Roster
+                                                    </button>
+                                                </div>
+                                            )}
                                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '2rem' }}>
                                                 {/* Left: Personal & Mailing */}
                                                 <div>

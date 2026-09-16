@@ -39,6 +39,7 @@ const requestSchema = new mongoose.Schema({
     requestDate: { type: String, default: () => new Date().toISOString().split('T')[0] },
     transcriptId: { type: String, default: null },
     enrolledStudentId: { type: String, default: null },
+    notInSystem: { type: Boolean, default: false },
 }, { timestamps: true });
 
 export default mongoose.model('Request', requestSchema);

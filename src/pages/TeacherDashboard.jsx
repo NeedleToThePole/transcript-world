@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 export default function TeacherDashboard({ teacherProgram }) {
     const [stats, setStats] = useState({ total: 0, pending: 0, completed: 0 });
     const [recentRequests, setRecentRequests] = useState([]);
+    const [notInSystemCount, setNotInSystemCount] = useState(0);
 
     useEffect(() => {
         getRequests().then(allData => {
@@ -13,9 +14,11 @@ export default function TeacherDashboard({ teacherProgram }) {
             const data = teacherProgram
                 ? allData.filter(r => r.program === teacherProgram)
                 : allData;
+            const notInSys = data.filter(r => r.status === 'Not in System' || r.notInSystem);
+            setNotInSystemCount(notInSys.length);
             setStats({
                 total: data.length,
-                pending: data.filter(r => r.status === 'Pending' || r.status === 'Processing').length,
+                pending: data.filter(r => r.status === 'Pending' || r.status?.startsWith('Pending') || r.status === 'Processing' || r.status === 'Not in System' || r.notInSystem).length,
                 completed: data.filter(r => r.status === 'Completed').length
             });
             setRecentRequests(data.slice(0, 5));
@@ -29,6 +32,40 @@ export default function TeacherDashboard({ teacherProgram }) {
                 <p style={{ color: '#0d9488', fontWeight: '500', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
                     Program: {teacherProgram}
                 </p>
+            )}
+
+            {notInSystemCount > 0 && (
+                <div style={{
+                    backgroundColor: '#fee2e2',
+                    border: '1px solid #fecaca',
+                    borderRadius: '8px',
+                    padding: '0.85rem 1.25rem',
+                    marginBottom: '1.5rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem',
+                    color: '#991b1b',
+                }}>
+                    <div>
+                        <strong>⚠️ Notice:</strong> {notInSystemCount} student{notInSystemCount > 1 ? 's' : ''} requested a transcript for {teacherProgram} but {notInSystemCount > 1 ? 'are' : 'is'} not currently in your system roster.
+                    </div>
+                    <Link
+                        to="/teacher/transcripts"
+                        style={{
+                            padding: '0.4rem 0.85rem',
+                            borderRadius: '6px',
+                            backgroundColor: '#dc2626',
+                            color: 'white',
+                            textDecoration: 'none',
+                            fontSize: '0.85rem',
+                            fontWeight: '600',
+                        }}
+                    >
+                        Review Requests →
+                    </Link>
+                </div>
             )}
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -83,17 +120,26 @@ export default function TeacherDashboard({ teacherProgram }) {
                                 <td style={{ padding: '0.75rem' }}>{req.program || '—'}</td>
                                 <td style={{ padding: '0.75rem' }}>{req.requestDate}</td>
                                 <td style={{ padding: '0.75rem' }}>
-                                    <span style={{
-                                        padding: '0.25rem 0.75rem',
-                                        borderRadius: '20px',
-                                        fontSize: '0.75rem',
-                                        backgroundColor: req.status === 'Pending' ? '#fff7ed' :
-                                            req.status === 'Completed' ? '#f0fdf4' : '#eff6ff',
-                                        color: req.status === 'Pending' ? '#c2410c' :
-                                            req.status === 'Completed' ? '#15803d' : '#1d4ed8'
-                                    }}>
-                                        {req.status}
-                                    </span>
+                                    {(() => {
+                                        const isNotEnrolled = req.status === 'Not in System' || req.notInSystem;
+                                        const isPending = req.status === 'Pending' || req.status?.startsWith('Pending');
+                                        const isComplete = req.status === 'Completed';
+                                        return (
+                                            <span style={{
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '20px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '600',
+                                                backgroundColor: isNotEnrolled ? '#fee2e2' : isPending ? '#fff7ed' : isComplete ? '#f0fdf4' : '#eff6ff',
+                                                color: isNotEnrolled ? '#dc2626' : isPending ? '#c2410c' : isComplete ? '#15803d' : '#1d4ed8',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '0.25rem',
+                                            }}>
+                                                {isNotEnrolled ? '⚠️ Not in System' : req.status}
+                                            </span>
+                                        );
+                                    })()}
                                 </td>
                             </tr>
                         ))}

@@ -27,7 +27,7 @@ export default function StudentRequest() {
 
         const lookup = await lookupStudentForRequest(formData);
 
-        let status, message;
+        let status, message, notInSystem = false;
         if (lookup.status === 'ready') {
             status = 'Ready for Review';
             message = 'Your transcript is complete and has been sent to the admin for review!';
@@ -35,9 +35,10 @@ export default function StudentRequest() {
             status = 'Pending — Awaiting Grades';
             message = 'Your request has been submitted. Your instructor has not yet completed your transcript.';
         } else {
-            // Student not immediately found on active roster — allow submission under verification
-            status = 'Pending — Verification Needed';
-            message = 'Your transcript request has been received! Our administration office will verify your enrollment records and process your transcript.';
+            // Student not immediately found on active roster — flag as not in system
+            status = 'Not in System';
+            notInSystem = true;
+            message = 'Your transcript request has been received! Because your records were not automatically found in the system roster, your request has been forwarded to the administration and your program instructor for verification.';
         }
 
         await createRequest({
@@ -48,6 +49,7 @@ export default function StudentRequest() {
             firstName: (formData.firstName || '').trim(),
             lastName: (formData.lastName || '').trim(),
             status,
+            notInSystem,
             transcriptId: lookup.transcript?.id || null,
             enrolledStudentId: lookup.student?.id || null,
             requestDate: new Date().toISOString().split('T')[0]

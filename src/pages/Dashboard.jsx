@@ -11,7 +11,7 @@ export default function Dashboard() {
         getRequests().then(data => {
             setStats({
                 total: data.length,
-                pending: data.filter(r => r.status?.startsWith('Pending')).length,
+                pending: data.filter(r => r.status?.startsWith('Pending') || r.status === 'Not in System' || r.notInSystem).length,
                 completed: data.filter(r => r.status === 'Completed').length
             });
             setRecentRequests(data.slice(0, 5)); // Get first 5
@@ -56,24 +56,29 @@ export default function Dashboard() {
                         </tr>
                     </thead>
                     <tbody>
-                        {recentRequests.map(req => (
-                            <tr key={req.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                <td style={{ padding: '0.75rem' }}>{req.studentId}</td>
-                                <td style={{ padding: '0.75rem' }}>{req.type}</td>
-                                <td style={{ padding: '0.75rem' }}>{req.requestDate}</td>
-                                <td style={{ padding: '0.75rem' }}>
-                                    <span style={{
-                                        padding: '0.25rem 0.75rem',
-                                        borderRadius: '20px',
-                                        fontSize: '0.75rem',
-                                        backgroundColor: req.status === 'Pending' ? '#fff7ed' : '#f0fdf4',
-                                        color: req.status === 'Pending' ? '#c2410c' : '#15803d'
-                                    }}>
-                                        {req.status}
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
+                        {recentRequests.map(req => {
+                            const isNotEnrolled = req.status === 'Not in System' || req.notInSystem;
+                            const isPending = req.status === 'Pending' || req.status?.startsWith('Pending');
+                            return (
+                                <tr key={req.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                    <td style={{ padding: '0.75rem' }}>{req.studentId || '—'}</td>
+                                    <td style={{ padding: '0.75rem' }}>{req.type}</td>
+                                    <td style={{ padding: '0.75rem' }}>{req.requestDate}</td>
+                                    <td style={{ padding: '0.75rem' }}>
+                                        <span style={{
+                                            padding: '0.25rem 0.75rem',
+                                            borderRadius: '20px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '600',
+                                            backgroundColor: isNotEnrolled ? '#fee2e2' : isPending ? '#fff7ed' : '#f0fdf4',
+                                            color: isNotEnrolled ? '#dc2626' : isPending ? '#c2410c' : '#15803d',
+                                        }}>
+                                            {isNotEnrolled ? '⚠️ Not in System' : req.status}
+                                        </span>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                         {recentRequests.length === 0 && (
                             <tr>
                                 <td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>No requests found</td>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getStudentsByProgram, addStudent, archiveStudent, getTranscriptByStudentId } from '../lib/data';
+import { getStudentsByProgram, addStudent, archiveStudent, getTranscriptByStudentId, getRequests, updateRequest } from '../lib/data';
 import { Users, Plus, Archive, Search, X, FileText } from 'lucide-react';
 
 export default function TeacherStudents({ teacherProgram }) {
@@ -10,6 +10,7 @@ export default function TeacherStudents({ teacherProgram }) {
     const [loading, setLoading] = useState(true);
     const [newStudent, setNewStudent] = useState({ firstName: '', lastName: '', email: '', phone: '', studentId: '' });
     const [transcriptStatuses, setTranscriptStatuses] = useState({}); // { studentId: 'complete' | 'in_progress' | null }
+    const [unEnrolledRequests, setUnEnrolledRequests] = useState([]);
 
     useEffect(() => {
         loadStudents();
@@ -27,6 +28,15 @@ export default function TeacherStudents({ teacherProgram }) {
                 statuses[s.id] = t ? t.status : null;
             }));
             setTranscriptStatuses(statuses);
+
+            // Check for un-enrolled transcript requests for this program
+            if (teacherProgram) {
+                const allReqs = await getRequests();
+                const pendingNotInSys = allReqs.filter(r =>
+                    r.program === teacherProgram && (r.notInSystem || r.status === 'Not in System')
+                );
+                setUnEnrolledRequests(pendingNotInSys);
+            }
         } catch (err) {
             console.error('Failed to load students:', err);
         }
@@ -39,6 +49,28 @@ export default function TeacherStudents({ teacherProgram }) {
         setNewStudent({ firstName: '', lastName: '', email: '', phone: '', studentId: '' });
         setShowAddForm(false);
         loadStudents();
+    }
+
+    async function handleQuickAddFromRequest(req) {
+        if (!window.confirm(`Add ${req.firstName} ${req.lastName} to your active roster for ${teacherProgram}?`)) return;
+        try {
+            const newStu = await addStudent({
+                firstName: req.firstName,
+                lastName: req.lastName,
+                email: req.email,
+                phone: req.phone,
+                studentId: req.studentId,
+                program: teacherProgram,
+            });
+            await updateRequest(req.id, {
+                enrolledStudentId: newStu.id || newStu._id,
+                notInSystem: false,
+                status: 'Pending — Awaiting Grades',
+            });
+            loadStudents();
+        } catch (err) {
+            alert('Failed to add student to roster: ' + err.message);
+        }
     }
 
     async function handleArchive(student) {
@@ -83,6 +115,65 @@ export default function TeacherStudents({ teacherProgram }) {
                     <Plus size={18} /> Add Student
                 </button>
             </div>
+
+            {/* Un-enrolled Transcript Requests Alert */}
+            {unEnrolledRequests.length > 0 && (
+                <div style={{
+                    marginBottom: '1.5rem',
+                    padding: '1rem 1.25rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#fee2e2',
+                    border: '1px solid #fecaca',
+                    color: '#991b1b',
+                }}>
+                    <div style={{ fontWeight: '600', marginBottom: '0.6rem', fontSize: '0.95rem' }}>
+                        ⚠️ Pending Transcript Requests From Students Not on Your Roster ({unEnrolledRequests.length}):
+                    </div>
+                    <div style={{ display: 'grid', gap: '0.5rem' }}>
+                        {unEnrolledRequests.map(r => (
+                            <div key={r.id} style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                padding: '0.6rem 0.85rem',
+                                backgroundColor: 'white',
+                                borderRadius: '6px',
+                                border: '1px solid #fca5a5',
+                                fontSize: '0.85rem',
+                                flexWrap: 'wrap',
+                                gap: '0.5rem',
+                            }}>
+                                <div>
+                                    <strong style={{ color: '#111827' }}>{r.firstName} {r.lastName}</strong>
+                                    {r.studentId && <span style={{ color: '#4b5563', marginLeft: '0.5rem' }}>ID: {r.studentId}</span>}
+                                    {r.email && <span style={{ color: '#4b5563', marginLeft: '0.5rem' }}>• {r.email}</span>}
+                                    {r.phone && <span style={{ color: '#4b5563', marginLeft: '0.5rem' }}>• {r.phone}</span>}
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <button
+                                        onClick={() => handleQuickAddFromRequest(r)}
+                                        style={{
+                                            padding: '0.35rem 0.85rem',
+                                            borderRadius: '6px',
+                                            backgroundColor: '#0d9488',
+                                            color: 'white',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            fontSize: '0.8rem',
+                                            fontWeight: '500',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '0.3rem',
+                                        }}
+                                    >
+                                        <Plus size={14} /> Add to Roster
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Add Student Form */}
             {showAddForm && (

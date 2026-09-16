@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getRequests, updateRequestStatus } from '../lib/data';
+import { getRequests, updateRequestStatus, addStudent, updateRequest } from '../lib/data';
 import { Link } from 'react-router-dom';
-import { Pencil, CheckCircle } from 'lucide-react';
+import { Pencil, CheckCircle, UserPlus } from 'lucide-react';
 
 export default function TeacherTranscripts({ teacherProgram }) {
     const [requests, setRequests] = useState([]);
@@ -18,16 +18,42 @@ export default function TeacherTranscripts({ teacherProgram }) {
 
     useEffect(() => {
         fetchRequests();
-    }, []);
+    }, [teacherProgram]);
 
     const handleMarkReady = async (id) => {
         await updateRequestStatus(id, 'Processing');
         fetchRequests();
     };
 
+    const handleAddToRoster = async (req) => {
+        if (!window.confirm(`Add ${req.firstName} ${req.lastName} to your active roster for ${req.program}?`)) return;
+        try {
+            const newStudent = await addStudent({
+                firstName: req.firstName,
+                lastName: req.lastName,
+                email: req.email,
+                phone: req.phone,
+                studentId: req.studentId,
+                program: req.program,
+            });
+            await updateRequest(req.id, {
+                enrolledStudentId: newStudent.id || newStudent._id,
+                notInSystem: false,
+                status: 'Pending — Awaiting Grades',
+            });
+            fetchRequests();
+        } catch (err) {
+            alert('Failed to add student to roster: ' + err.message);
+        }
+    };
+
     const filteredRequests = filter === 'All'
         ? requests
-        : requests.filter(r => r.status === filter);
+        : requests.filter(r => {
+            if (filter === 'Not in System') return r.status === 'Not in System' || r.notInSystem;
+            if (filter === 'Pending') return r.status === 'Pending' || r.status?.startsWith('Pending') || r.status === 'Not in System' || r.notInSystem;
+            return r.status === filter;
+        });
 
     return (
         <div>
@@ -46,6 +72,7 @@ export default function TeacherTranscripts({ teacherProgram }) {
                     style={{ width: 'auto', padding: '0.5rem 2rem' }}
                 >
                     <option>All</option>
+                    <option>Not in System</option>
                     <option>Pending</option>
                     <option>Processing</option>
                     <option>Completed</option>
@@ -74,25 +101,51 @@ export default function TeacherTranscripts({ teacherProgram }) {
                                 <td style={{ padding: '1rem' }}>{req.type}</td>
                                 <td style={{ padding: '1rem' }}>{req.requestDate}</td>
                                 <td style={{ padding: '1rem' }}>
-                                    <span style={{
-                                        padding: '0.25rem 0.75rem',
-                                        borderRadius: '20px',
-                                        fontSize: '0.75rem',
-                                        backgroundColor: req.status === 'Pending' ? '#fff7ed' :
-                                            req.status === 'Completed' ? '#f0fdf4' : '#eff6ff',
-                                        color: req.status === 'Pending' ? '#c2410c' :
-                                            req.status === 'Completed' ? '#15803d' : '#1d4ed8'
-                                    }}>
-                                        {req.status}
-                                    </span>
+                                    {(() => {
+                                        const isNotEnrolled = req.status === 'Not in System' || req.notInSystem;
+                                        const isPending = req.status === 'Pending' || req.status?.startsWith('Pending');
+                                        const isComplete = req.status === 'Completed';
+                                        return (
+                                            <span style={{
+                                                padding: '0.25rem 0.75rem',
+                                                borderRadius: '20px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '600',
+                                                backgroundColor: isNotEnrolled ? '#fee2e2' : isPending ? '#fff7ed' : isComplete ? '#f0fdf4' : '#eff6ff',
+                                                color: isNotEnrolled ? '#dc2626' : isPending ? '#c2410c' : isComplete ? '#15803d' : '#1d4ed8',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '0.25rem',
+                                            }}>
+                                                {isNotEnrolled ? '⚠️ Not in System' : req.status}
+                                            </span>
+                                        );
+                                    })()}
                                 </td>
-                                <td style={{ padding: '1rem', display: 'flex', gap: '0.5rem' }}>
+                                <td style={{ padding: '1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                    {(req.status === 'Not in System' || req.notInSystem) && (
+                                        <button
+                                            onClick={() => handleAddToRoster(req)}
+                                            style={{
+                                                display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                                                padding: '0.4rem 0.75rem', borderRadius: '6px',
+                                                backgroundColor: '#0d9488', color: 'white',
+                                                border: 'none', cursor: 'pointer',
+                                                fontSize: '0.85rem', fontWeight: '500',
+                                            }}
+                                            title="Add Student to Class Roster"
+                                        >
+                                            <UserPlus size={14} /> Add to Roster
+                                        </button>
+                                    )}
                                     <Link
                                         to={`/teacher/transcript/${req.id}`}
                                         style={{
                                             display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
                                             padding: '0.4rem 0.75rem', borderRadius: '6px',
-                                            backgroundColor: '#0d9488', color: 'white',
+                                            backgroundColor: (req.status === 'Not in System' || req.notInSystem) ? 'transparent' : '#0d9488',
+                                            color: (req.status === 'Not in System' || req.notInSystem) ? '#0d9488' : 'white',
+                                            border: (req.status === 'Not in System' || req.notInSystem) ? '1px solid #0d9488' : 'none',
                                             textDecoration: 'none', fontSize: '0.85rem',
                                             fontWeight: '500',
                                         }}
