@@ -6,6 +6,7 @@ import TeacherSidebar from './components/TeacherSidebar';
 import Header from './components/Header';
 import AdminLogin from './components/AdminLogin';
 import TeacherLogin from './components/TeacherLogin';
+import { getStoredAuth, clearAuth } from './lib/data';
 
 import Dashboard from './pages/Dashboard';
 import StudentRequest from './pages/StudentRequest';
@@ -92,8 +93,23 @@ function PublicLayout({ children }) {
 }
 
 function AppRoutes() {
-    const [adminAuth, setAdminAuth] = useState(false);
-    const [teacherAuth, setTeacherAuth] = useState(null);   // null | program name string
+    const initialAuth = getStoredAuth();
+    const [adminAuth, setAdminAuth] = useState(
+        Boolean(initialAuth.token && initialAuth.role === 'admin')
+    );
+    const [teacherAuth, setTeacherAuth] = useState(
+        initialAuth.token && initialAuth.role === 'teacher' ? initialAuth.program : null
+    );   // null | program name string
+
+    const handleAdminLogout = () => {
+        clearAuth();
+        setAdminAuth(false);
+    };
+
+    const handleTeacherLogout = () => {
+        clearAuth();
+        setTeacherAuth(null);
+    };
 
     return (
         <Routes>
@@ -113,7 +129,7 @@ function AppRoutes() {
 
             <Route path="/teacher/*" element={
                 teacherAuth ? (
-                    <TeacherLayout teacherAuth={teacherAuth} onLogout={() => setTeacherAuth(null)}>
+                    <TeacherLayout teacherAuth={teacherAuth} onLogout={handleTeacherLogout}>
                         <Routes>
                             <Route path="dashboard" element={<TeacherDashboard teacherProgram={teacherAuth} />} />
                             <Route path="students" element={<TeacherStudents teacherProgram={teacherAuth} />} />
@@ -138,7 +154,7 @@ function AppRoutes() {
 
             <Route path="/admin/*" element={
                 adminAuth ? (
-                    <AdminLayout onLogout={() => setAdminAuth(false)}>
+                    <AdminLayout onLogout={handleAdminLogout}>
                         <Routes>
                             <Route path="dashboard" element={<Dashboard />} />
                             <Route path="requests" element={<RequestQueue />} />

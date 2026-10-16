@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createRequest, getTeacherCodes, lookupStudentForRequest } from '../lib/data';
+import { createRequest, getTeacherCodes } from '../lib/data';
 
 export default function StudentRequest() {
     const [programs, setPrograms] = useState([]);
@@ -25,39 +25,30 @@ export default function StudentRequest() {
         setSubmitting(true);
         setRequestResult(null);
 
-        const lookup = await lookupStudentForRequest(formData);
+        try {
+            const created = await createRequest({
+                ...formData,
+                studentId: (formData.studentId || '').trim(),
+                program: (formData.program || '').trim(),
+                email: (formData.email || '').trim(),
+                firstName: (formData.firstName || '').trim(),
+                lastName: (formData.lastName || '').trim(),
+                requestDate: new Date().toISOString().split('T')[0]
+            });
 
-        let status, message, notInSystem = false;
-        if (lookup.status === 'ready') {
-            status = 'Ready for Review';
-            message = 'Your transcript is complete and has been sent to the admin for review!';
-        } else if (lookup.status === 'in_progress' || lookup.status === 'awaiting_grades') {
-            status = 'Pending — Awaiting Grades';
-            message = 'Your request has been submitted. Your instructor has not yet completed your transcript.';
-        } else {
-            // Student not immediately found on active roster — flag as not in system
-            status = 'Not in System';
-            notInSystem = true;
-            message = 'Your transcript request has been received! Because your records were not automatically found in the system roster, your request has been forwarded to the administration and your program instructor for verification.';
+            setRequestResult({
+                status: 'success',
+                message: created.userMessage || 'Your transcript request has been submitted!'
+            });
+            setSubmitted(true);
+        } catch (err) {
+            setRequestResult({
+                status: 'error',
+                message: err.message || 'Unable to submit request right now. Please try again later.'
+            });
+        } finally {
+            setSubmitting(false);
         }
-
-        await createRequest({
-            ...formData,
-            studentId: (formData.studentId || '').trim(),
-            program: (formData.program || '').trim(),
-            email: (formData.email || '').trim(),
-            firstName: (formData.firstName || '').trim(),
-            lastName: (formData.lastName || '').trim(),
-            status,
-            notInSystem,
-            transcriptId: lookup.transcript?.id || null,
-            enrolledStudentId: lookup.student?.id || null,
-            requestDate: new Date().toISOString().split('T')[0]
-        });
-
-        setRequestResult({ status: 'success', message });
-        setSubmitted(true);
-        setSubmitting(false);
     };
 
     const handleChange = (e) => {

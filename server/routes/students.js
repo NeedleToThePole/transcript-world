@@ -1,110 +1,119 @@
 import { Router } from 'express';
 import Student from '../models/Student.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
 
 function escapeRegex(str) {
-    return (str || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return String(str || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// GET /api/students — all students OR filtered by query params with multi-factor fallback
-router.get('/', async (req, res) => {
+// GET /api/students — requires authentication; teachers are scoped to their own program
+router.get('/', requireAuth, async (req, res) => {
     try {
-        const { program, studentId, email, firstName, lastName, archived, id } = req.query;
-
-        // Specific lookup by MongoDB _id
+        const id = typeof req.query.id === 'string' ? req.query.id.trim() : '';
         if (id) {
             const students = await Student.find({ _id: id }).lean();
-            return res.json(students.map(s => ({ ...s, id: s._id })));
+            const filtered = req.user.role === 'teacher'
+                ? students.filter(s => s.program === req.user.program)
+                : students;
+            return res.json(filtered.map(s => ({ ...s, id: s._id })));
         }
 
+        const requestedProgram = req.user.role === 'teacher'
+            ? req.user.program
+            : (typeof req.query.program === 'string' ? req.query.program.trim() : '');
+
+        const studentId = typeof req.query.studentId === 'string' ? req.query.studentId.trim() : '';
+        const email = typeof req.query.email === 'string' ? req.query.email.trim() : '';
+        const archived = req.query.archived;
         const isArchived = archived !== undefined ? archived === 'true' : false;
-        const programFilter = program ? new RegExp('^' + escapeRegex(program.trim()) + '$', 'i') : null;
 
-        // If performing a student verification lookup (has studentId, email, or name along with program)
-        if (programFilter && (studentId || email || (firstName && lastName))) {
-            let matchedStudents = [];
-
-            // 1. Try matching by studentId (trimmed, case-insensitive)
-            if (studentId && studentId.trim()) {
-                const sIdRegex = new RegExp('^' + escapeRegex(studentId.trim()) + '$', 'i');
-                matchedStudents = await Student.find({
-                    studentId: sIdRegex,
-                    program: programFilter,
-                    archived: isArchived
-                }).lean();
-            }
-
-            // 2. Fallback: try matching by email if no match by studentId
-            if (matchedStudents.length === 0 && email && email.trim()) {
-                const emailRegex = new RegExp('^' + escapeRegex(email.trim()) + '$', 'i');
-                matchedStudents = await Student.find({
-                    email: emailRegex,
-                    program: programFilter,
-                    archived: isArchived
-                }).lean();
-            }
-
-            // 3. Fallback: try matching by First & Last Name if still no match
-            if (matchedStudents.length === 0 && firstName && lastName && firstName.trim() && lastName.trim()) {
-                const fRegex = new RegExp('^' + escapeRegex(firstName.trim()) + '$', 'i');
-                const lRegex = new RegExp('^' + escapeRegex(lastName.trim()) + '$', 'i');
-                matchedStudents = await Student.find({
-                    firstName: fRegex,
-                    lastName: lRegex,
-                    program: programFilter,
-                    archived: isArchived
-                }).lean();
-            }
-
-            if (matchedStudents.length > 0) {
-                return res.json(matchedStudents.map(s => ({ ...s, id: s._id })));
-            }
-        }
-
-        // Standard filter for general queries (e.g., teacher rosters, student listings)
         const filter = {};
-        if (programFilter) filter.program = programFilter;
-        if (archived !== undefined) filter.archived = isArchived;
-        if (studentId) filter.studentId = new RegExp('^' + escapeRegex(studentId.trim()) + '$', 'i');
-        if (email) filter.email = new RegExp('^' + escapeRegex(email.trim()) + '$', 'i');
+        if (requestedProgram) {
+            filter.program = new RegExp('^' + escapeRegex(requestedProgram) + '$', 'i');
+        }
+        if (archived !== undefined) {
+            filter.archived = isArchived;
+        }
+        if (studentId) {
+            filter.studentId = new RegExp('^' + escapeRegex(studentId) + '$', 'i');
+        }
+        if (email) {
+            filter.email = new RegExp('^' + escapeRegex(email) + '$', 'i');
+        }
 
         const students = await Student.find(filter).lean();
         res.json(students.map(s => ({ ...s, id: s._id })));
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    } catch {
+        res.status(500).json({ error: 'Failed to load students.' });
     }
 });
 
 // GET /api/students/:id — single student by MongoDB _id
-router.get('/:id', async (req, res) => {
+router.get('/:id', requireAuth, async (req, res) => {
     try {
-        const student = await Student.findById(req.params.id).lean();
+        const student = await Student.findById(String(req.params.id)).lean();
         if (!student) return res.status(404).json({ error: 'Student not found' });
+
+        if (req.user.role === 'teacher' && student.program !== req.user.program) {
+            return res.status(403).json({ error: 'Access denied for this program.' });
+        }
+
         res.json({ ...student, id: student._id });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    } catch {
+        res.status(500).json({ error: 'Failed to load student.' });
     }
 });
 
 // POST /api/students — add a new student
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
     try {
-        const student = await Student.create(req.body);
+        const b = req.body || {};
+        const cleanStr = (val) => (typeof val === 'string' ? val.trim() : '');
+        const program = req.user.role === 'teacher' ? req.user.program : cleanStr(b.program);
+
+        const student = await Student.create({
+            firstName: cleanStr(b.firstName),
+            lastName: cleanStr(b.lastName),
+            email: cleanStr(b.email),
+            phone: cleanStr(b.phone),
+            studentId: cleanStr(b.studentId),
+            program,
+            archived: false,
+        });
         res.status(201).json({ ...student.toObject(), id: student._id });
-    } catch (err) {
-        res.status(400).json({ error: err.message });
+    } catch {
+        res.status(400).json({ error: 'Failed to add student.' });
     }
 });
 
 // PATCH /api/students/:id — partial update
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', requireAuth, async (req, res) => {
     try {
-        const student = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true }).lean();
-        if (!student) return res.status(404).json({ error: 'Student not found' });
+        const existing = await Student.findById(String(req.params.id)).lean();
+        if (!existing) return res.status(404).json({ error: 'Student not found' });
+
+        if (req.user.role === 'teacher' && existing.program !== req.user.program) {
+            return res.status(403).json({ error: 'Access denied for this program.' });
+        }
+
+        const b = req.body || {};
+        const allowed = {};
+        if (typeof b.firstName === 'string') allowed.firstName = b.firstName.trim();
+        if (typeof b.lastName === 'string') allowed.lastName = b.lastName.trim();
+        if (typeof b.email === 'string') allowed.email = b.email.trim();
+        if (typeof b.phone === 'string') allowed.phone = b.phone.trim();
+        if (typeof b.studentId === 'string') allowed.studentId = b.studentId.trim();
+        if (typeof b.archived === 'boolean') allowed.archived = b.archived;
+        if (req.user.role === 'admin' && typeof b.program === 'string') {
+            allowed.program = b.program.trim();
+        }
+
+        const student = await Student.findByIdAndUpdate(String(req.params.id), allowed, { new: true }).lean();
         res.json({ ...student, id: student._id });
-    } catch (err) {
-        res.status(400).json({ error: err.message });
+    } catch {
+        res.status(400).json({ error: 'Failed to update student.' });
     }
 });
 

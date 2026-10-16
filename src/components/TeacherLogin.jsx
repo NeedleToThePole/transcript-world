@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Lock, BookOpen } from 'lucide-react';
-import { getTeacherCodes } from '../lib/data';
+import { getTeacherCodes, loginTeacher } from '../lib/data';
 
 export default function TeacherLogin({ onLogin }) {
     const [step, setStep] = useState(1);           // 1 = pick program, 2 = enter code
@@ -8,6 +8,7 @@ export default function TeacherLogin({ onLogin }) {
     const [code, setCode] = useState('');
     const [error, setError] = useState('');
     const [teacherCodes, setTeacherCodes] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const [apiError, setApiError] = useState(false);
 
@@ -26,16 +27,22 @@ export default function TeacherLogin({ onLogin }) {
         setStep(2);
     };
 
-    const handleCodeSubmit = (e) => {
+    const handleCodeSubmit = async (e) => {
         e.preventDefault();
-        const match = teacherCodes.find(
-            tc => tc.program === selectedProgram && tc.code === code
-        );
-        if (match) {
-            onLogin(selectedProgram);
-        } else {
-            setError('Invalid access code. Please try again.');
-            setCode('');
+        setError('');
+        setLoading(true);
+        try {
+            const result = await loginTeacher(selectedProgram, code);
+            if (result.ok) {
+                onLogin(result.program || selectedProgram);
+            } else {
+                setError(result.error || 'Invalid access code. Please try again.');
+                setCode('');
+            }
+        } catch {
+            setError('Unable to reach server. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -70,7 +77,7 @@ export default function TeacherLogin({ onLogin }) {
 
                 {apiError && (
                     <p style={{ color: '#dc2626', fontSize: '0.8rem', backgroundColor: '#fef2f2', padding: '0.5rem', borderRadius: '6px', marginBottom: '1rem' }}>
-                        ⚠️ Cannot connect to the server. Make sure json-server is running on port 3000.
+                        ⚠️ Cannot connect to the server. Make sure the backend server is running.
                     </p>
                 )}
 
@@ -150,6 +157,7 @@ export default function TeacherLogin({ onLogin }) {
                                     boxSizing: 'border-box',
                                 }}
                                 autoFocus
+                                disabled={loading}
                             />
 
                             {error && (
@@ -171,8 +179,9 @@ export default function TeacherLogin({ onLogin }) {
                                     transition: 'background-color 0.2s',
                                     marginBottom: '0.75rem',
                                 }}
+                                disabled={loading}
                             >
-                                Sign In
+                                {loading ? 'Signing In...' : 'Sign In'}
                             </button>
 
                             <button
@@ -188,6 +197,7 @@ export default function TeacherLogin({ onLogin }) {
                                     borderRadius: '8px',
                                     cursor: 'pointer',
                                 }}
+                                disabled={loading}
                             >
                                 ← Back to Program Selection
                             </button>

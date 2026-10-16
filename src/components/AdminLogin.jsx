@@ -1,17 +1,28 @@
 import React, { useState } from 'react';
 import { Lock } from 'lucide-react';
+import { loginAdmin } from '../lib/data';
 
 export default function AdminLogin({ onLogin }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (password === '0000') {
-            onLogin();
-        } else {
-            setError('Incorrect password. Please try again.');
-            setPassword('');
+        setError('');
+        setLoading(true);
+        try {
+            const result = await loginAdmin(password);
+            if (result.ok) {
+                onLogin();
+            } else {
+                setError(result.error || 'Incorrect password. Please try again.');
+                setPassword('');
+            }
+        } catch {
+            setError('Unable to reach server. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -63,6 +74,7 @@ export default function AdminLogin({ onLogin }) {
                             boxSizing: 'border-box',
                         }}
                         autoFocus
+                        disabled={loading}
                     />
 
                     {error && (
@@ -73,8 +85,9 @@ export default function AdminLogin({ onLogin }) {
                         type="submit"
                         className="btn btn-primary"
                         style={{ width: '100%', padding: '0.75rem', fontSize: '1rem' }}
+                        disabled={loading}
                     >
-                        Sign In
+                        {loading ? 'Signing In...' : 'Sign In'}
                     </button>
                 </form>
             </div>
